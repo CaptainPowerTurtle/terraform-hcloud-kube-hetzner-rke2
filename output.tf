@@ -4,7 +4,7 @@ output "cluster_name" {
 }
 
 output "network_id" {
-  value       = data.hcloud_network.k3s.id
+  value       = data.hcloud_network.rke2.id
   description = "The ID of the HCloud network."
 }
 
@@ -62,14 +62,14 @@ output "lb_control_plane_ipv6" {
 }
 
 
-output "k3s_endpoint" {
+output "rke2_endpoint" {
   description = "A controller endpoint to register new nodes"
-  value       = "https://${var.use_control_plane_lb ? hcloud_load_balancer_network.control_plane.*.ip[0] : module.control_planes[keys(module.control_planes)[0]].private_ipv4_address}:6443"
+  value       = "https://${var.use_control_plane_lb ? hcloud_load_balancer_network.control_plane.*.ip[0] : module.control_planes[keys(module.control_planes)[0]].private_ipv4_address}:9345"
 }
 
-output "k3s_token" {
-  description = "The k3s token to register new nodes"
-  value       = local.k3s_token
+output "rke2_token" {
+  description = "The rke2 token to register new nodes"
+  value       = local.rke2_token
   sensitive   = true
 }
 

@@ -15,15 +15,15 @@ module "agents" {
   ssh_public_key               = var.ssh_public_key
   ssh_private_key              = var.ssh_private_key
   ssh_additional_public_keys   = length(var.ssh_hcloud_key_label) > 0 ? concat(var.ssh_additional_public_keys, data.hcloud_ssh_keys.keys_by_selector[0].ssh_keys.*.public_key) : var.ssh_additional_public_keys
-  firewall_ids                 = [hcloud_firewall.k3s.id]
+  firewall_ids                 = [hcloud_firewall.rke2.id]
   placement_group_id           = var.placement_group_disable ? null : (each.value.placement_group == null ? hcloud_placement_group.agent[each.value.placement_group_compat_idx].id : hcloud_placement_group.agent_named[each.value.placement_group].id)
   location                     = each.value.location
   server_type                  = each.value.server_type
   backups                      = each.value.backups
   ipv4_subnet_id               = hcloud_network_subnet.agent[[for i, v in var.agent_nodepools : i if v.name == each.value.nodepool_name][0]].id
   dns_servers                  = var.dns_servers
-  k3s_registries               = var.k3s_registries
-  k3s_registries_update_script = local.k3s_registries_update_script
+  rke2_registries               = var.rke2_registries
+  rke2_registries_update_script = local.rke2_registries_update_script
   cloudinit_write_files_common = local.cloudinit_write_files_common
   cloudinit_runcmd_common      = local.cloudinit_runcmd_common
   swap_size                    = each.value.swap_size
@@ -43,12 +43,12 @@ module "agents" {
 }
 
 locals {
-  k3s-agent-config = { for k, v in local.agent_nodes : k => merge(
+  rke2-agent-config = { for k, v in local.agent_nodes : k => merge(
     {
       node-name     = module.agents[k].name
-      server        = "https://${var.use_control_plane_lb ? hcloud_load_balancer_network.control_plane.*.ip[0] : module.control_planes[keys(module.control_planes)[0]].private_ipv4_address}:6443"
-      token         = local.k3s_token
-      kubelet-arg   = concat(local.kubelet_arg, var.k3s_global_kubelet_args, var.k3s_agent_kubelet_args, v.kubelet_args)
+      server        = "https://${var.use_control_plane_lb ? hcloud_load_balancer_network.control_plane.*.ip[0] : module.control_planes[keys(module.control_planes)[0]].private_ipv4_address}:9345"
+      token         = local.rke2_token
+      kubelet-arg   = concat(local.kubelet_arg, var.rke2_global_kubelet_args, var.rke2_agent_kubelet_args, v.kubelet_args)
       flannel-iface = local.flannel_iface
       node-ip       = module.agents[k].private_ipv4_address
       node-label    = v.labels
@@ -64,7 +64,7 @@ resource "null_resource" "agent_config" {
 
   triggers = {
     agent_id = module.agents[each.key].id
-    config   = sha1(yamlencode(local.k3s-agent-config[each.key]))
+    config   = sha1(yamlencode(local.rke2-agent-config[each.key]))
   }
 
   connection {
@@ -75,14 +75,14 @@ resource "null_resource" "agent_config" {
     port           = var.ssh_port
   }
 
-  # Generating k3s agent config file
+  # Generating rke2 agent config file
   provisioner "file" {
-    content     = yamlencode(local.k3s-agent-config[each.key])
+    content     = yamlencode(local.rke2-agent-config[each.key])
     destination = "/tmp/config.yaml"
   }
 
   provisioner "remote-exec" {
-    inline = [local.k3s_config_update_script]
+    inline = [local.rke2_config_update_script]
   }
 }
 
@@ -101,20 +101,21 @@ resource "null_resource" "agents" {
     port           = var.ssh_port
   }
 
-  # Install k3s agent
+  # Install rke2 agent
   provisioner "remote-exec" {
-    inline = local.install_k3s_agent
+    inline = local.install_rke2_agent
   }
 
-  # Start the k3s agent and wait for it to have started
+  # Start the rke2 agent and wait for it to have started
   provisioner "remote-exec" {
     inline = concat(var.enable_longhorn || var.enable_iscsid ? ["systemctl enable --now iscsid"] : [], [
-      "systemctl start k3s-agent 2> /dev/null",
+      "systemctl enable rke2-agent.service",
+      "systemctl start rke2-agent.service 2> /dev/null",
       <<-EOT
       timeout 120 bash <<EOF
-        until systemctl status k3s-agent > /dev/null; do
-          systemctl start k3s-agent 2> /dev/null
-          echo "Waiting for the k3s agent to start..."
+        until systemctl status rke2-agent > /dev/null; do
+          systemctl start rke2-agent 2> /dev/null
+          echo "Waiting for the rke2 agent to start..."
           sleep 2
         done
       EOF
@@ -152,7 +153,7 @@ resource "null_resource" "configure_longhorn_volume" {
     agent_id = module.agents[each.key].id
   }
 
-  # Start the k3s agent and wait for it to have started
+  # Start the rke2 agent and wait for it to have started
   provisioner "remote-exec" {
     inline = [
       "mkdir /var/longhorn >/dev/null 2>&1",

@@ -2,13 +2,13 @@
 <br />
 <p align="center">
   <a href="https://github.com/mysticaltech/kube-hetzner">
-    <img src="https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/raw/master/.images/kube-hetzner-logo.png" alt="Logo" width="112" height="112">
+    <img src="https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/raw/master/.images/kube-hetzner-logo.png" alt="Logo" width="112" height="112">
   </a>
 
   <h2 align="center">Kube-Hetzner</h2>
 
   <p align="center">
-    A highly optimized, easy-to-use, auto-upgradable, HA-default & Load-Balanced, Kubernetes cluster powered by k3s-on-MicroOS and deployed for peanuts on <a href="https://hetzner.com" target="_blank">Hetzner Cloud</a> 🤑
+    A highly optimized, easy-to-use, auto-upgradable, HA-default & Load-Balanced, Kubernetes cluster powered by rke2-on-MicroOS and deployed for peanuts on <a href="https://hetzner.com" target="_blank">Hetzner Cloud</a> 🤑
   </p>
   <hr />
     <p align="center">
@@ -23,7 +23,7 @@
 
 This project aims to create a highly optimized Kubernetes installation that is easy to maintain, secure, and automatically upgrades both the nodes and Kubernetes. We aimed for functionality as close as possible to GKE's Auto-Pilot. _Please note that we are not affiliates of Hetzner, but we do strive to be an optimal solution for deploying and maintaining Kubernetes clusters on Hetzner Cloud._
 
-To achieve this, we built up on the shoulders of giants by choosing [openSUSE MicroOS](https://en.opensuse.org/Portal:MicroOS) as the base operating system and [k3s](https://k3s.io/) as the k8s engine.
+To achieve this, we built up on the shoulders of giants by choosing [openSUSE MicroOS](https://en.opensuse.org/Portal:MicroOS) as the base operating system and [rke2](https://rke2.io/) as the k8s engine.
 
 ![Product Name Screen Shot][product-screenshot]
 
@@ -35,16 +35,16 @@ To achieve this, we built up on the shoulders of giants by choosing [openSUSE Mi
 - Automatic updates by default and automatic rollbacks if something breaks, thanks to its use of BTRFS snapshots.
 - Supports [Kured](https://github.com/kubereboot/kured) to properly drain and reboot nodes in an HA fashion.
 
-**Why k3s?**
+**Why rke2?**
 
 - Certified Kubernetes Distribution, it is automatically synced to k8s source.
 - Fast deployment, as it is a single binary and can be deployed with a single command.
-- Comes with batteries included, with its in-cluster [helm-controller](https://github.com/k3s-io/helm-controller).
+- Comes with batteries included, with its in-cluster [helm-controller](https://github.com/rke2-io/helm-controller).
 - Easy automatic updates, via the [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller).
 
 ### Features
 
-- [x] **Maintenance-free** with auto-upgrades to the latest version of MicroOS and k3s.
+- [x] **Maintenance-free** with auto-upgrades to the latest version of MicroOS and rke2.
 - [x] **Multi-architecture support**, choose any Hetzner cloud instances, including the cheaper CAX ARM instances.
 - [x] Proper use of the **Hetzner private network** to minimize latency.
 - [x] Choose between **Flannel, Calico, or Cilium** as CNI.
@@ -88,29 +88,29 @@ brew install coreutils
 ### 💡 [Do not skip] Creating your kube.tf file and the OpenSUSE MicroOS snapshot
 
 1. Create a project in your [Hetzner Cloud Console](https://console.hetzner.cloud/), and go to **Security > API Tokens** of that project to grab the API key, it needs to be Read & Write. Take note of the key! ✅
-2. Generate a passphrase-less ed25519 SSH key pair for your cluster; take note of the respective paths of your private and public keys. Or, see our detailed [SSH options](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/blob/master/docs/ssh.md). ✅
+2. Generate a passphrase-less ed25519 SSH key pair for your cluster; take note of the respective paths of your private and public keys. Or, see our detailed [SSH options](https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/blob/master/docs/ssh.md). ✅
 3. Now navigate to where you want to have your project live and execute the following command, which will help you get started with a **new folder** along with the required files, and will propose you to create a needed MicroOS snapshot. ✅
 
    ```sh
-   tmp_script=$(mktemp) && curl -sSL -o "${tmp_script}" https://raw.githubusercontent.com/kube-hetzner/terraform-hcloud-kube-hetzner/master/scripts/create.sh && chmod +x "${tmp_script}" && "${tmp_script}" && rm "${tmp_script}"
+   tmp_script=$(mktemp) && curl -sSL -o "${tmp_script}" https://raw.githubusercontent.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/master/scripts/create.sh && chmod +x "${tmp_script}" && "${tmp_script}" && rm "${tmp_script}"
    ```
 
    Or for fish shell:
 
    ```fish
-   set tmp_script (mktemp); curl -sSL -o "{tmp_script}" https://raw.githubusercontent.com/kube-hetzner/terraform-hcloud-kube-hetzner/master/scripts/create.sh; chmod +x "{tmp_script}"; bash "{tmp_script}"; rm "{tmp_script}"
+   set tmp_script (mktemp); curl -sSL -o "{tmp_script}" https://raw.githubusercontent.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/master/scripts/create.sh; chmod +x "{tmp_script}"; bash "{tmp_script}"; rm "{tmp_script}"
    ```
 
    _Optionally, for future usage, save that command as an alias in your shell preferences, like so:_
 
    ```sh
-   alias createkh='tmp_script=$(mktemp) && curl -sSL -o "${tmp_script}" https://raw.githubusercontent.com/kube-hetzner/terraform-hcloud-kube-hetzner/master/scripts/create.sh && chmod +x "${tmp_script}" && "${tmp_script}" && rm "${tmp_script}"'
+   alias createkh='tmp_script=$(mktemp) && curl -sSL -o "${tmp_script}" https://raw.githubusercontent.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/master/scripts/create.sh && chmod +x "${tmp_script}" && "${tmp_script}" && rm "${tmp_script}"'
    ```
 
    Or for fish shell:
 
    ```fish
-   alias createkh='set tmp_script (mktemp); curl -sSL -o "{tmp_script}" https://raw.githubusercontent.com/kube-hetzner/terraform-hcloud-kube-hetzner/master/scripts/create.sh; chmod +x "{tmp_script}"; bash "{tmp_script}"; rm "{tmp_script}"'
+   alias createkh='set tmp_script (mktemp); curl -sSL -o "{tmp_script}" https://raw.githubusercontent.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/master/scripts/create.sh; chmod +x "{tmp_script}"; bash "{tmp_script}"; rm "{tmp_script}"'
    ```
 
    _For the curious, here is what the script does:_
@@ -118,8 +118,8 @@ brew install coreutils
    ```sh
    mkdir /path/to/your/new/folder
    cd /path/to/your/new/folder
-   curl -sL https://raw.githubusercontent.com/kube-hetzner/terraform-hcloud-kube-hetzner/master/kube.tf.example -o kube.tf
-   curl -sL https://raw.githubusercontent.com/kube-hetzner/terraform-hcloud-kube-hetzner/master/packer-template/hcloud-microos-snapshots.pkr.hcl -o hcloud-microos-snapshots.pkr.hcl
+   curl -sL https://raw.githubusercontent.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/master/kube.tf.example -o kube.tf
+   curl -sL https://raw.githubusercontent.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/master/packer-template/hcloud-microos-snapshots.pkr.hcl -o hcloud-microos-snapshots.pkr.hcl
    export HCLOUD_TOKEN="your_hcloud_token"
    packer init hcloud-microos-snapshots.pkr.hcl
    packer build hcloud-microos-snapshots.pkr.hcl
@@ -128,7 +128,7 @@ brew install coreutils
 
 4. In that new project folder that gets created, you will find your `kube.tf` and it must be customized to suit your needs. ✅
 
-   _A complete reference of all inputs, outputs, modules etc. can be found in the [terraform.md](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/blob/master/docs/terraform.md) file._
+   _A complete reference of all inputs, outputs, modules etc. can be found in the [terraform.md](https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/blob/master/docs/terraform.md) file._
 
 ### 🎯 Installation
 
@@ -206,9 +206,9 @@ _Important to know, the nodes are booted based on a snapshot that is created fro
 
 By default, we have three control planes and three agents configured, with automatic upgrades and reboots of the nodes.
 
-If you want to remain HA (no downtime), it's essential to **keep a count of control planes nodes of at least three** (two minimum to maintain quorum when one goes down for automated upgrades and reboot), see [Rancher's doc on HA](https://rancher.com/docs/k3s/latest/en/installation/ha-embedded/).
+If you want to remain HA (no downtime), it's essential to **keep a count of control planes nodes of at least three** (two minimum to maintain quorum when one goes down for automated upgrades and reboot), see [Rancher's doc on HA](https://rancher.com/docs/rke2/latest/en/installation/ha-embedded/).
 
-Otherwise, it is essential to turn off automatic OS upgrades (k3s can continue to update without issue) for the control-plane nodes (when two or fewer control-plane nodes) and do the maintenance yourself.
+Otherwise, it is essential to turn off automatic OS upgrades (rke2 can continue to update without issue) for the control-plane nodes (when two or fewer control-plane nodes) and do the maintenance yourself.
 
 ## Automatic Upgrade
 
@@ -216,9 +216,9 @@ Otherwise, it is essential to turn off automatic OS upgrades (k3s can continue t
 
 By default, MicroOS gets upgraded automatically on each node and reboot safely via [Kured](https://github.com/kubereboot/kured) installed in the cluster.
 
-As for k3s, it also automatically upgrades thanks to Rancher's [system upgrade controller](https://github.com/rancher/system-upgrade-controller). By default, it will be set to the `initial_k3s_channel`, but you can also set it to `stable`, `latest`, or one more specific like `v1.23` if needed or specify a target version to upgrade to via the upgrade plan (this also allows for downgrades).
+As for rke2, it also automatically upgrades thanks to Rancher's [system upgrade controller](https://github.com/rancher/system-upgrade-controller). By default, it will be set to the `initial_rke2_channel`, but you can also set it to `stable`, `latest`, or one more specific like `v1.23` if needed or specify a target version to upgrade to via the upgrade plan (this also allows for downgrades).
 
-You can copy and modify the [one in the templates](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/blob/master/templates/plans.yaml.tpl) for that! More on the subject in [k3s upgrades](https://rancher.com/docs/k3s/latest/en/upgrades/basic/).
+You can copy and modify the [one in the templates](https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/blob/master/templates/plans.yaml.tpl) for that! More on the subject in [rke2 upgrades](https://rancher.com/docs/rke2/latest/en/upgrades/basic/).
 
 ### Configuring update timeframes
 
@@ -242,27 +242,27 @@ Alternatively ssh into each node and issue the following command:
 systemctl --now disable transactional-update.timer
 ```
 
-If you wish to turn off automatic k3s upgrades, you need to set:
+If you wish to turn off automatic rke2 upgrades, you need to set:
 
 ```tf
-automatically_upgrade_k3s = false
+automatically_upgrade_rke2 = false
 ```
 
-_Once disabled this way you selectively can enable the upgrade by setting the node label `k3s_update=true` and later disable it by removing the label or set it to `false` again._
+_Once disabled this way you selectively can enable the upgrade by setting the node label `rke2_update=true` and later disable it by removing the label or set it to `false` again._
 
 ```sh
 # Enable upgrade for a node (use --all for all nodes)
-kubectl label --overwrite node <node-name> k3s_upgrade=true
+kubectl label --overwrite node <node-name> rke2_upgrade=true
 
 # Later disable upgrade by removing the label (use --all for all nodes)
-kubectl label node <node-name> k3s_upgrade-
+kubectl label node <node-name> rke2_upgrade-
 ```
 
-Alternatively, you can disable the k3s automatic upgrade without individually editing the labels on the nodes. Instead, you can just delete the two system controller upgrade plans with:
+Alternatively, you can disable the rke2 automatic upgrade without individually editing the labels on the nodes. Instead, you can just delete the two system controller upgrade plans with:
 
 ```sh
-kubectl delete plan k3s-agent -n system-upgrade
-kubectl delete plan k3s-server -n system-upgrade
+kubectl delete plan rke2-agent -n system-upgrade
+kubectl delete plan rke2-server -n system-upgrade
 ```
 
 Also, note that after turning off node upgrades, you will need to manually upgrade the nodes when needed. You can do so by SSH'ing into each node and running the following commands (and don't forget to drain the node before with `kubectl drain <node-name>`):
@@ -282,7 +282,7 @@ Rarely needed, but can be handy in the long run. During the installation, we aut
 
 ## Customizing the Cluster Components
 
-Most cluster components of Kube-Hetzner are deployed with the Rancher [Helm Chart](https://rancher.com/docs/k3s/latest/en/helm/) yaml definition and managed by the Helm Controller inside k3s.
+Most cluster components of Kube-Hetzner are deployed with the Rancher [Helm Chart](https://rancher.com/docs/rke2/latest/en/helm/) yaml definition and managed by the Helm Controller inside rke2.
 
 By default, we strive to give you optimal defaults, but if you wish, you can customize them.
 
@@ -294,11 +294,11 @@ If you need to install additional Helm charts or Kubernetes manifests that are n
 
 These files need to be valid `Kustomization` manifests, additionally supporting terraform templating! (The templating parameters can be passed via the `extra_kustomize_parameters` variable (via a map) to the module).
 
-All files in the `extra-manifests` directory and its subdirectories including the rendered versions of the `*.yaml.tpl` will be applied to k3s with `kubectl apply -k` (which will be executed after and independently of the basic cluster configuration).
+All files in the `extra-manifests` directory and its subdirectories including the rendered versions of the `*.yaml.tpl` will be applied to rke2 with `kubectl apply -k` (which will be executed after and independently of the basic cluster configuration).
 
-See a working example in [examples/kustomization_user_deploy](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/tree/master/examples/kustomization_user_deploy).
+See a working example in [examples/kustomization_user_deploy](https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/tree/master/examples/kustomization_user_deploy).
 
-_You can use the above to pass all kinds of Kubernetes YAML configs, including HelmChart and/or HelmChartConfig definitions (see the previous section if you do not know what those are in the context of k3s)._
+_You can use the above to pass all kinds of Kubernetes YAML configs, including HelmChart and/or HelmChartConfig definitions (see the previous section if you do not know what those are in the context of rke2)._
 
 _That said, you can also use pure Terraform and import the kube-hetzner module as part of a larger project, and then use things like the Terraform helm provider to add additional stuff, all up to you!_
 
@@ -525,7 +525,7 @@ hcloud image delete <image-id>
 
 Running a development cluster on a single node without any high availability is also possible.
 
-When doing so, `automatically_upgrade_os` should be set to `false`, especially with attached volumes the automatic reboots won't work properly. In this case, we don't deploy an external load-balancer but use the default [k3s service load balancer](https://rancher.com/docs/k3s/latest/en/networking/#service-load-balancer) on the host itself and open up port 80 & 443 in the firewall (done automatically).
+When doing so, `automatically_upgrade_os` should be set to `false`, especially with attached volumes the automatic reboots won't work properly. In this case, we don't deploy an external load-balancer but use the default [rke2 service load balancer](https://rancher.com/docs/rke2/latest/en/networking/#service-load-balancer) on the host itself and open up port 80 & 443 in the firewall (done automatically).
 
 </details>
 
@@ -661,7 +661,7 @@ For more details, see [Longhorn's documentation](https://longhorn.io/docs/1.4.0/
 To enable the [PodNodeSelector and optionally the PodTolerationRestriction](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podnodeselector) api modules, set the following value:
 
 ```tf
-k3s_exec_server_args = "--kube-apiserver-arg enable-admission-plugins=PodTolerationRestriction,PodNodeSelector"
+rke2_exec_server_args = "--kube-apiserver-arg enable-admission-plugins=PodTolerationRestriction,PodNodeSelector"
 ```
 
 Next, you can set default nodeSelector values per namespace. This lets you assign namespaces to specific nodes. Note though, that this is the default as well as the whitelist, so if a pod sets its own nodeSelector value that must be a subset of the default. Otherwise, the pod will not be scheduled.
@@ -697,21 +697,21 @@ This can be helpful when you set up a mixed-architecture cluster, and there are 
 
 <summary>Backup and restore a cluster</summary>
 
-K3s allows for automated etcd backups to S3. Etcd is the default storage backend on kube-hetzner, even for a single control plane cluster, hence this should work for all cluster deployments.
+rke2 allows for automated etcd backups to S3. Etcd is the default storage backend on kube-hetzner, even for a single control plane cluster, hence this should work for all cluster deployments.
 
 **For backup do:**
 
 1. Fill the kube.tf config `etcd_s3_backup`, it will trigger a regular automated backup to S3.
-2. Add the k3s_token as an output to your kube.tf
+2. Add the rke2_token as an output to your kube.tf
 
 ```tf
-output "k3s_token" {
-  value     = module.kube-hetzner.k3s_token
+output "rke2_token" {
+  value     = module.kube-hetzner.rke2_token
   sensitive = true
 }
 ```
 
-3. Make sure you can access the k3s_token via `terraform output k3s_token`.
+3. Make sure you can access the rke2_token via `terraform output rke2_token`.
 
 **For restoration do:**
 
@@ -721,11 +721,11 @@ output "k3s_token" {
 locals {
   # ...
 
-  k3s_token = var.k3s_token  # this is secret information, hence it is passed as an environment variable
+  rke2_token = var.rke2_token  # this is secret information, hence it is passed as an environment variable
 
-  # to get the corresponding etcd_version for a k3s version you need to
-  # - start k3s or have it running
-  # - run `curl -L --cacert /var/lib/rancher/k3s/server/tls/etcd/server-ca.crt --cert /var/lib/rancher/k3s/server/tls/etcd/server-client.crt --key /var/lib/rancher/k3s/server/tls/etcd/server-client.key https://127.0.0.1:2379/version`
+  # to get the corresponding etcd_version for a rke2 version you need to
+  # - start rke2 or have it running
+  # - run `curl -L --cacert /var/lib/rancher/rke2/server/tls/etcd/server-ca.crt --cert /var/lib/rancher/rke2/server/tls/etcd/server-client.crt --key /var/lib/rancher/rke2/server/tls/etcd/server-client.key https://127.0.0.1:2379/version`
   # for details see https://gist.github.com/superseb/0c06164eef5a097c66e810fe91a9d408
   etcd_version = "v3.5.9"
 
@@ -738,7 +738,7 @@ locals {
   # ...
 }
 
-variable "k3s_token" {
+variable "rke2_token" {
   sensitive = true
   type      = string
 }
@@ -751,7 +751,7 @@ variable "etcd_s3_secret_key" {
 module "kube-hetzner" {
   # ...
 
-  k3s_token = local.k3s_token
+  rke2_token = local.rke2_token
 
   # ...
 
@@ -759,10 +759,10 @@ module "kube-hetzner" {
     (
       local.etcd_snapshot_name == "" ? "" :
       <<-EOF
-      export CLUSTERINIT=$(cat /etc/rancher/k3s/config.yaml | grep -i '"cluster-init": true')
+      export CLUSTERINIT=$(cat /etc/rancher/rke2/config.yaml | grep -i '"cluster-init": true')
       if [ -n "$CLUSTERINIT" ]; then
         echo indeed this is the first control plane node > /tmp/restorenotes
-        k3s server \
+        rke2 server \
           --cluster-reset \
           --etcd-s3 \
           --cluster-reset-restore-path=${local.etcd_snapshot_name} \
@@ -770,11 +770,11 @@ module "kube-hetzner" {
           --etcd-s3-bucket=${local.etcd_s3_bucket} \
           --etcd-s3-access-key=${local.etcd_s3_access_key} \
           --etcd-s3-secret-key=${local.etcd_s3_secret_key}
-        # renaming the k3s.yaml because it is used as a trigger for further downstream
-        # changes. Better to let `k3s server` create it as expected.
-        mv /etc/rancher/k3s/k3s.yaml /etc/rancher/k3s/k3s.backup.yaml
+        # renaming the rke2.yaml because it is used as a trigger for further downstream
+        # changes. Better to let `rke2 server` create it as expected.
+        mv /etc/rancher/rke2/rke2.yaml /etc/rancher/rke2/rke2.backup.yaml
 
-        # download etcd/etcdctl for adapting the kubernetes config before starting k3s
+        # download etcd/etcdctl for adapting the kubernetes config before starting rke2
         ETCD_VER=${local.etcd_version}
         case "$(uname -m)" in
             aarch64) ETCD_ARCH="arm64" ;;
@@ -790,7 +790,7 @@ module "kube-hetzner" {
         etcdctl version
 
         # start etcd server in the background
-        nohup etcd --data-dir /var/lib/rancher/k3s/server/db/etcd &
+        nohup etcd --data-dir /var/lib/rancher/rke2/server/db/etcd &
         echo $! > save_pid.txt
 
         # delete traefik service so that no load-balancer is accidently changed
@@ -820,7 +820,7 @@ module "kube-hetzner" {
 
 2. Set the following sensible environment variables
 
-   - `export TF_VAR_k3s_token="..."` (Be careful, this token is like an admin password to the entire cluster. You need to use the same k3s_token which you saved when creating the backup.)
+   - `export TF_VAR_rke2_token="..."` (Be careful, this token is like an admin password to the entire cluster. You need to use the same rke2_token which you saved when creating the backup.)
    - `export etcd_s3_secret_key="..."`
 
 3. Create the cluster as usual. You can also change the cluster-name and deploy it next to the original backed up cluster.
@@ -830,25 +830,25 @@ Awesome! You restored a whole cluster from a backup.
 </details>
 <details>
 <summary>Deploy in a pre-constructed private network (for proxies etc)</summary>
-If you want to deploy other machines on the private network before deploying the k3s cluster,
+If you want to deploy other machines on the private network before deploying the rke2 cluster,
 you can. One use-case is if you want to setup a proxy or a NAT router on the private network,
-which is needed by the k3s cluster already at the time of construction.
+which is needed by the rke2 cluster already at the time of construction.
 
 It is important to get all the address ranges right in this case, although the
 number of changes needed is minimal. If your network is created with 10.0.0.0/8,
-and you use subnet 10.128.0.0/9 for your non-k3s business, then adapting
+and you use subnet 10.128.0.0/9 for your non-rke2 business, then adapting
 `network_ipv4_cidr = "10.0.0.0/9"` should be all you need.
 
 For example
 
 ```tf
-resource "hcloud_network" "k3s_proxied" {
-  name     = "k3s-proxied"
+resource "hcloud_network" "rke2_proxied" {
+  name     = "rke2-proxied"
   ip_range = "10.0.0.0/8"
 }
 
-resource "hcloud_network_subnet" "k3s_proxy" {
-  network_id   = hcloud_network.k3s_proxied.id
+resource "hcloud_network_subnet" "rke2_proxy" {
+  network_id   = hcloud_network.rke2_proxied.id
   type         = "cloud"
   network_zone = "eu-central"
   ip_range     = "10.128.0.0/9"
@@ -861,14 +861,14 @@ resource "hcloud_server_network" "your_proxy_server" {
     hcloud_server.your_proxy_server
   ]
   server_id  = hcloud_server.your_proxy_server.id
-  network_id = hcloud_network.k3s_proxied.id
+  network_id = hcloud_network.rke2_proxied.id
   ip         = "10.128.0.1"
 }
 module "kube-hetzner" {
   ...
-  existing_network_id = [hcloud_network.k3s_proxied.id]
+  existing_network_id = [hcloud_network.rke2_proxied.id]
   network_ipv4_cidr = "10.0.0.0/9"
-  additional_k3s_environment = {
+  additional_rke2_environment = {
     "http_proxy" : "http://10.128.0.1:3128",
     "HTTP_PROXY" : "http://10.128.0.1:3128",
     "HTTPS_PROXY" : "http://10.128.0.1:3128",
@@ -1001,8 +1001,8 @@ First and foremost, it depends, but it's always good to have a quick look into H
 
 - Activate it with `hcloud context create Kube-hetzner`; it will prompt for your Hetzner API token, paste that, and hit `enter`.
 - To check the nodes, if they are running, use `hcloud server list`.
-- To check the network, use `hcloud network describe k3s`.
-- To look at the LB, use `hcloud loadbalancer describe k3s-traefik`.
+- To check the network, use `hcloud network describe rke2`.
+- To look at the LB, use `hcloud loadbalancer describe rke2-traefik`.
 
 Then for the rest, you'll often need to log in to your cluster via ssh, to do that, use:
 
@@ -1010,9 +1010,9 @@ Then for the rest, you'll often need to log in to your cluster via ssh, to do th
 ssh root@<control-plane-ip> -i /path/to/private_key -o StrictHostKeyChecking=no
 ```
 
-Then, for control-plane nodes, use `journalctl -u k3s` to see the k3s logs, and for agents, use `journalctl -u k3s-agent` instead.
+Then, for control-plane nodes, use `journalctl -u rke2` to see the rke2 logs, and for agents, use `journalctl -u rke2-agent` instead.
 
-Inspect the value of the k3s config.yaml file with: `cat /etc/rancher/k3s/config.yaml`, see if it looks kosher.
+Inspect the value of the rke2 config.yaml file with: `cat /etc/rancher/rke2/config.yaml`, see if it looks kosher.
 
 Last but not least, to see when the previous reboot took place, you can use both `last reboot` and `uptime`.
 
@@ -1027,13 +1027,13 @@ terraform destroy -auto-approve
 If you see the destroy hanging, it's probably because of the Hetzner LB and the autoscaled nodes. You can use the following command to delete everything (dry run option is available don't worry, and it will only delete resources specific to your cluster):
 
 ```sh
-tmp_script=$(mktemp) && curl -sSL -o "${tmp_script}" https://raw.githubusercontent.com/kube-hetzner/terraform-hcloud-kube-hetzner/master/scripts/cleanup.sh && chmod +x "${tmp_script}" && "${tmp_script}" && rm "${tmp_script}"
+tmp_script=$(mktemp) && curl -sSL -o "${tmp_script}" https://raw.githubusercontent.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/master/scripts/cleanup.sh && chmod +x "${tmp_script}" && "${tmp_script}" && rm "${tmp_script}"
 ```
 
 As a one time thing, for convenience, you can also save it as an alias in your shell config file, like so:
 
 ```sh
-alias cleanupkh='tmp_script=$(mktemp) && curl -sSL -o "${tmp_script}" https://raw.githubusercontent.com/kube-hetzner/terraform-hcloud-kube-hetzner/master/scripts/cleanup.sh && chmod +x "${tmp_script}" && "${tmp_script}" && rm "${tmp_script}"'
+alias cleanupkh='tmp_script=$(mktemp) && curl -sSL -o "${tmp_script}" https://raw.githubusercontent.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/master/scripts/cleanup.sh && chmod +x "${tmp_script}" && "${tmp_script}" && rm "${tmp_script}"'
 ```
 
 _Careful, the above commands will delete everything, including volumes in your projects. You can always try with a dry run, it will give you that option._
@@ -1044,8 +1044,8 @@ Usually, you will want to upgrade the module in your project to the latest versi
 
 When moving from 1.x to 2.x:
 
-- Within your project folder, run the `createkh` installation command, see [Do Not Skip](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner#-do-not-skip-creating-your-kubetf-file-and-the-opensuse-microos-snapshot) section above. This will create the snapshot for you. Don't worry, it's non-destructive and will leave your kube.tf and terraform state alone, but will download the required other packer file.
-- Then modify your kube.tf to use version >= 2.0, and remove `extra_packages_to_install` and `opensuse_microos_mirror_link` variables if used. This functionality has been moved to the packer snapshot definition, see [packer-template/hcloud-microos-snapshots.pkr.hlc](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/blob/master/packer-template/hcloud-microos-snapshots.pkr.hcl).
+- Within your project folder, run the `createkh` installation command, see [Do Not Skip](https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2#-do-not-skip-creating-your-kubetf-file-and-the-opensuse-microos-snapshot) section above. This will create the snapshot for you. Don't worry, it's non-destructive and will leave your kube.tf and terraform state alone, but will download the required other packer file.
+- Then modify your kube.tf to use version >= 2.0, and remove `extra_packages_to_install` and `opensuse_microos_mirror_link` variables if used. This functionality has been moved to the packer snapshot definition, see [packer-template/hcloud-microos-snapshots.pkr.hlc](https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/blob/master/packer-template/hcloud-microos-snapshots.pkr.hcl).
 - Then run `terraform init -upgrade && terraform apply`.
 
 <!-- CONTRIBUTING -->
@@ -1085,9 +1085,9 @@ Code contributions are very much **welcome**.
 - [Best-README-Template](https://github.com/othneildrew/Best-README-Template) made writing this readme a lot easier.
 - [Hetzner Cloud](https://www.hetzner.com) for providing a solid infrastructure and terraform package.
 - [Hashicorp](https://www.hashicorp.com) for the amazing terraform framework that makes all the magic happen.
-- [Rancher](https://www.rancher.com) for k3s, an amazing Kube distribution that is the core engine of this project.
+- [Rancher](https://www.rancher.com) for rke2, an amazing Kube distribution that is the core engine of this project.
 - [openSUSE](https://www.opensuse.org) for MicroOS, which is just next-level Container OS technology.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 
-[product-screenshot]: https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/raw/master/.images/kubectl-pod-all-17022022.png
+[product-screenshot]: https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/raw/master/.images/kubectl-pod-all-17022022.png

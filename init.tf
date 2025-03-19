@@ -29,13 +29,13 @@ resource "null_resource" "first_control_plane" {
     port           = var.ssh_port
   }
 
-  # Generating k3s master config file
+  # Generating rke2 master config file
   provisioner "file" {
     content = yamlencode(
       merge(
         {
           node-name                   = module.control_planes[keys(module.control_planes)[0]].name
-          token                       = local.k3s_token
+          token                       = local.rke2_token
           cluster-init                = true
           disable-cloud-controller    = true
           disable-kube-proxy          = var.disable_kube_proxy
@@ -51,7 +51,7 @@ resource "null_resource" "first_control_plane" {
           service-cidr                = var.service_ipv4_cidr
           cluster-dns                 = var.cluster_dns_ipv4
         },
-        lookup(local.cni_k3s_settings, var.cni_plugin, {}),
+        lookup(local.cni_rke2_settings, var.cni_plugin, {}),
         var.use_control_plane_lb ? {
           tls-san = concat([hcloud_load_balancer.control_plane.*.ipv4[0], hcloud_load_balancer_network.control_plane.*.ip[0]], var.additional_tls_sans)
           } : {
@@ -66,26 +66,26 @@ resource "null_resource" "first_control_plane" {
     destination = "/tmp/config.yaml"
   }
 
-  # Install k3s server
+  # Install rke2 server
   provisioner "remote-exec" {
-    inline = local.install_k3s_server
+    inline = local.install_rke2_server
   }
 
-  # Upon reboot start k3s and wait for it to be ready to receive commands
+  # Upon reboot start rke2 and wait for it to be ready to receive commands
   provisioner "remote-exec" {
     inline = [
-      "systemctl start k3s",
+      "systemctl start rke2",
       # prepare the needed directories
       "mkdir -p /var/post_install /var/user_kustomize",
-      # wait for k3s to become ready
+      # wait for rke2 to become ready
       <<-EOT
       timeout 120 bash <<EOF
-        until systemctl status k3s > /dev/null; do
-          systemctl start k3s
-          echo "Waiting for the k3s server to start..."
+        until systemctl status rke2 > /dev/null; do
+          systemctl start rke2
+          echo "Waiting for the rke2 server to start..."
           sleep 2
         done
-        until [ -e /etc/rancher/k3s/k3s.yaml ]; do
+        until [ -e /etc/rancher/rke2/rke2.yaml ]; do
           echo "Waiting for kubectl config..."
           sleep 2
         done
@@ -128,8 +128,8 @@ resource "null_resource" "kustomization" {
     ])
     # Redeploy when versions of addons need to be updated
     versions = join("\n", [
-      coalesce(var.initial_k3s_channel, "N/A"),
-      coalesce(var.install_k3s_version, "N/A"),
+      coalesce(var.initial_rke2_channel, "N/A"),
+      coalesce(var.install_rke2_version, "N/A"),
       coalesce(var.cluster_autoscaler_version, "N/A"),
       coalesce(var.hetzner_ccm_version, "N/A"),
       coalesce(var.hetzner_csi_version, "N/A"),
@@ -234,8 +234,8 @@ resource "null_resource" "kustomization" {
     content = templatefile(
       "${path.module}/templates/plans.yaml.tpl",
       {
-        channel          = var.initial_k3s_channel
-        version          = var.install_k3s_version
+        channel          = var.initial_rke2_channel
+        version          = var.install_rke2_version
         disable_eviction = !var.system_upgrade_enable_eviction
         drain            = var.system_upgrade_use_drain
     })
@@ -323,7 +323,7 @@ resource "null_resource" "kustomization" {
   provisioner "remote-exec" {
     inline = [
       "set -ex",
-      "kubectl -n kube-system create secret generic hcloud --from-literal=token=${var.hcloud_token} --from-literal=network=${data.hcloud_network.k3s.name} --dry-run=client -o yaml | kubectl apply -f -",
+      "kubectl -n kube-system create secret generic hcloud --from-literal=token=${var.hcloud_token} --from-literal=network=${data.hcloud_network.rke2.name} --dry-run=client -o yaml | kubectl apply -f -",
       "kubectl -n kube-system create secret generic hcloud-csi --from-literal=token=${var.hcloud_token} --dry-run=client -o yaml | kubectl apply -f -",
     ]
   }
@@ -343,7 +343,7 @@ resource "null_resource" "kustomization" {
       # manifests themselves
       "sed -i 's/^- |[0-9]\\+$/- |/g' /var/post_install/kustomization.yaml",
 
-      # Wait for k3s to become ready (we check one more time) because in some edge cases,
+      # Wait for rke2 to become ready (we check one more time) because in some edge cases,
       # the cluster had become unvailable for a few seconds, at this very instant.
       <<-EOT
       timeout 360 bash <<EOF

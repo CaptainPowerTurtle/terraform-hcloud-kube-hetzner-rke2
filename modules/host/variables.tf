@@ -99,12 +99,12 @@ variable "automatically_upgrade_os" {
   default = true
 }
 
-variable "k3s_registries" {
+variable "rke2_registries" {
   default = ""
   type    = string
 }
 
-variable "k3s_registries_update_script" {
+variable "rke2_registries_update_script" {
   default = ""
   type    = string
 }

@@ -25,7 +25,7 @@ module "kube-hetzner" {
   # 2. For local dev, path to the git repo
   # source = "../../kube-hetzner/"
   # 3. If you want to use the latest master branch (see https://developer.hashicorp.com/terraform/language/modules/sources#github), use
-  # source = "github.com/kube-hetzner/terraform-hcloud-kube-hetzner"
+  # source = "github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2"
 
   # Note that some values, notably "location" and "public_key" have no effect after initializing the cluster.
   # This is to keep Terraform from re-provisioning all nodes at once, which would lose data. If you want to update
@@ -64,7 +64,7 @@ module "kube-hetzner" {
   #
   # NOTE1: make sure to adapt network_ipv4_cidr, cluster_ipv4_cidr, and service_ipv4_cidr accordingly.
   #        If your network is created with 10.0.0.0/8, and you use subnet 10.128.0.0/9 for your
-  #        non-k3s business, then adapting `network_ipv4_cidr = "10.0.0.0/9"` should be all you need.
+  #        non-rke2 business, then adapting `network_ipv4_cidr = "10.0.0.0/9"` should be all you need.
   #
   # NOTE2: square brackets! This must be a list of length 1.
   #
@@ -74,7 +74,7 @@ module "kube-hetzner" {
   # network_ipv4_cidr = "10.0.0.0/8"
 
   # Using the default configuration you can only create a maximum of 42 agent-nodepools.
-  # This is due to the creation of a subnet for each nodepool with CIDRs being in the shape of 10.[nodepool-index].0.0/16 which collides with k3s' cluster and service IP ranges (defaults below).
+  # This is due to the creation of a subnet for each nodepool with CIDRs being in the shape of 10.[nodepool-index].0.0/16 which collides with rke2' cluster and service IP ranges (defaults below).
   # Furthermore the maximum number of nodepools (controlplane and agent) is 50, due to a hard limit of 50 subnets per network, see https://docs.hetzner.com/cloud/networks/faq/.
   # So to be able to create a maximum of 50 nodepools in total, the values below have to be changed to something outside that range, e.g. `10.200.0.0/16` and `10.201.0.0/16` for cluster and service respectively.
 
@@ -94,7 +94,7 @@ module "kube-hetzner" {
   # cluster_dns_ipv4 = "10.43.0.10"
 
   # For the control planes, at least three nodes are the minimum for HA. Otherwise, you need to turn off the automatic upgrades (see README).
-  # **It must always be an ODD number, never even!** Search the internet for "split-brain problem with etcd" or see https://rancher.com/docs/k3s/latest/en/installation/ha-embedded/
+  # **It must always be an ODD number, never even!** Search the internet for "split-brain problem with etcd" or see https://rancher.com/docs/rke2/latest/en/installation/ha-embedded/
   # For instance, one is ok (non-HA), two is not ok, and three is ok (becomes HA). It does not matter if they are in the same nodepool or not! So they can be in different locations and of various types.
 
   # Of course, you can choose any number of nodepools you want, with the location you want. The only constraint on the location is that you need to stay in the same network region, Europe, or the US.
@@ -221,7 +221,7 @@ module "kube-hetzner" {
     },
     # Egress nodepool useful to route egress traffic using Hetzner Floating IPs (https://docs.hetzner.com/cloud/floating-ips)
     # used with Cilium's Egress Gateway feature https://docs.cilium.io/en/stable/gettingstarted/egress-gateway/
-    # See the https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner#examples for an example use case.
+    # See the https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2#examples for an example use case.
     {
       name        = "egress",
       server_type = "cx22",
@@ -415,13 +415,13 @@ module "kube-hetzner" {
   # Just provide a map with the needed settings (according to your S3 storage provider) and backups to S3 will
   # be enabled (with the default settings for etcd snapshots).
   # Cloudflare's R2 offers 10GB, 10 million reads and 1 million writes per month for free.
-  # For proper context, have a look at https://docs.k3s.io/datastore/backup-restore.
-  # You also can use additional parameters from https://docs.k3s.io/cli/etcd-snapshot, such as `etc-s3-folder`
+  # For proper context, have a look at https://docs.rke2.io/datastore/backup-restore.
+  # You also can use additional parameters from https://docs.rke2.io/cli/etcd-snapshot, such as `etc-s3-folder`
   # etcd_s3_backup = {
   #   etcd-s3-endpoint        = "xxxx.r2.cloudflarestorage.com"
   #   etcd-s3-access-key      = "<access-key>"
   #   etcd-s3-secret-key      = "<secret-key>"
-  #   etcd-s3-bucket          = "k3s-etcd-snapshots"
+  #   etcd-s3-bucket          = "rke2-etcd-snapshots"
   #   etcd-s3-region          = "<your-s3-bucket-region|usually required for aws>"
   # }
 
@@ -437,7 +437,7 @@ module "kube-hetzner" {
   # enable_iscsid = true
 
   # To use local storage on the nodes, you can enable Longhorn, default is "false".
-  # See a full recap on how to configure agent nodepools for longhorn here https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/discussions/373#discussioncomment-3983159
+  # See a full recap on how to configure agent nodepools for longhorn here https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/discussions/373#discussioncomment-3983159
   # Also see Longhorn best practices here https://gist.github.com/ifeulner/d311b2868f6c00e649f33a72166c2e5b
   # enable_longhorn = true
 
@@ -555,34 +555,34 @@ module "kube-hetzner" {
   # If you want to disable the metric server set this to "false". Default is "true".
   # enable_metrics_server = false
 
-  # If you want to enable the k3s built-in local-storage controller set this to "true". Default is "false".
+  # If you want to enable the rke2 built-in local-storage controller set this to "true". Default is "false".
   # Warning: When enabled together with the Hetzner CSI, there will be two default storage classes: "local-path" and "hcloud-volumes"!
   #   Even if patched to remove the "default" label, the local-path storage class will be reset as default on each reboot of
   #   the node where the controller runs.
   #   This is not a problem if you explicitly define which storageclass to use in your PVCs.
   #   Workaround if you don't want two default storage classes: leave this to false and add the local-path-provisioner helm chart 
-  #   as an extra (https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner#adding-extras).
+  #   as an extra (https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2#adding-extras).
   # enable_local_storage = false
 
   # If you want to allow non-control-plane workloads to run on the control-plane nodes, set this to "true". The default is "false".
   # True by default for single node clusters, and when enable_klipper_metal_lb is true. In those cases, the value below will be ignored.
   # allow_scheduling_on_control_plane = true
 
-  # If you want to disable the automatic upgrade of k3s, you can set below to "false".
-  # Ideally, keep it on, to always have the latest Kubernetes version, but lock the initial_k3s_channel to a kube major version,
+  # If you want to disable the automatic upgrade of rke2, you can set below to "false".
+  # Ideally, keep it on, to always have the latest Kubernetes version, but lock the initial_rke2_channel to a kube major version,
   # of your choice, like v1.25 or v1.26. That way you get the best of both worlds without the breaking changes risk.
   # For production use, always use an HA setup with at least 3 control-plane nodes and 2 agents, and keep this on for maximum security.
 
   # The default is "true" (in HA setup i.e. at least 3 control plane nodes & 2 agents, just keep it enabled since it works flawlessly).
-  # automatically_upgrade_k3s = false
+  # automatically_upgrade_rke2 = false
 
-  # By default nodes are drained before k3s upgrade, which will delete and transfer all pods to other nodes.
+  # By default nodes are drained before rke2 upgrade, which will delete and transfer all pods to other nodes.
   # Set this to false to cordon nodes instead, which just prevents scheduling new pods on the node during upgrade
   # and keeps all pods running. This may be useful if you have pods which are known to be slow to start e.g.
   # because they have to mount volumes with many files which require to get the right security context applied.
   system_upgrade_use_drain = true
 
-  # During k3s via system-upgrade-manager pods are evicted by default.
+  # During rke2 via system-upgrade-manager pods are evicted by default.
   # On small clusters this can lead to hanging upgrades and indefinitely unschedulable nodes,
   # in that case, set this to false to immediately delete pods before upgrading.
   # NOTE: Turning this flag off might lead to downtimes of services (which may be acceptable for your use case)
@@ -608,33 +608,33 @@ module "kube-hetzner" {
   #   "lock-ttl" : "30m",
   # }
 
-  # Allows you to specify the k3s version. If defined, supersedes initial_k3s_channel.
-  # See https://github.com/k3s-io/k3s/releases for the available versions.
-  # install_k3s_version = "v1.30.2+k3s2"
+  # Allows you to specify the rke2 version. If defined, supersedes initial_rke2_channel.
+  # See https://github.com/rke2-io/rke2/releases for the available versions.
+  # install_rke2_version = "v1.30.2+rke22"
   
   # Allows you to specify either stable, latest, testing or supported minor versions.
-  # see https://rancher.com/docs/k3s/latest/en/upgrades/basic/ and https://update.k3s.io/v1-release/channels
+  # see https://rancher.com/docs/rke2/latest/en/upgrades/basic/ and https://update.rke2.io/v1-release/channels
   # ⚠️ If you are going to use Rancher addons for instance, it's always a good idea to fix the kube version to one minor version below the latest stable,
   #     e.g. v1.29 instead of the stable v1.30.
   # The default is "v1.30".
-  # initial_k3s_channel = "stable"
+  # initial_rke2_channel = "stable"
 
-  # Allows to specify the version of the System Upgrade Controller for automated upgrades of k3s
+  # Allows to specify the version of the System Upgrade Controller for automated upgrades of rke2
   # See https://github.com/rancher/system-upgrade-controller/releases for the available versions.
   # sys_upgrade_controller_version = "v0.14.2"
 
-  # The cluster name, by default "k3s"
+  # The cluster name, by default "rke2"
   # cluster_name = ""
 
   # Whether to use the cluster name in the node name, in the form of {cluster_name}-{nodepool_name}, the default is "true".
   # use_cluster_name_in_node_name = false
 
-  # Extra k3s registries. This is useful if you have private registries and you want to pull images without additional secrets.
+  # Extra rke2 registries. This is useful if you have private registries and you want to pull images without additional secrets.
   # Or if you want to proxy registries for various reasons like rate-limiting.
-  # It will create the registries.yaml file, more info here https://docs.k3s.io/installation/private-registry.
+  # It will create the registries.yaml file, more info here https://docs.rke2.io/installation/private-registry.
   # Note that you do not need to get this right from the first time, you can update it when you want during the life of your cluster.
   # The default is blank.
-  /* k3s_registries = <<-EOT
+  /* rke2_registries = <<-EOT
     mirrors:
       hub.my_registry.com:
         endpoint:
@@ -646,14 +646,14 @@ module "kube-hetzner" {
           password: password
   EOT */
 
-  # Additional environment variables for the host OS on which k3s runs. See for example https://docs.k3s.io/advanced#configuring-an-http-proxy .
-  # additional_k3s_environment = {
+  # Additional environment variables for the host OS on which rke2 runs. See for example https://docs.rke2.io/advanced#configuring-an-http-proxy .
+  # additional_rke2_environment = {
   #   "CONTAINERD_HTTP_PROXY" : "http://your.proxy:port",
   #   "CONTAINERD_HTTPS_PROXY" : "http://your.proxy:port",
   #   "NO_PROXY" : "127.0.0.0/8,10.0.0.0/8,",
   # }
 
-  # Additional commands to execute on the host OS before the k3s install, for example fetching and installing certs.
+  # Additional commands to execute on the host OS before the rke2 install, for example fetching and installing certs.
   # preinstall_exec = [
   #   "curl https://somewhere.over.the.rainbow/ca.crt > /root/ca.crt",
   #   "trust anchor --store /root/ca.crt",
@@ -702,19 +702,19 @@ module "kube-hetzner" {
 
 
 
-  # Additional flags to pass to the k3s server command (the control plane).
-  # k3s_exec_server_args = "--kube-apiserver-arg enable-admission-plugins=PodTolerationRestriction,PodNodeSelector"
+  # Additional flags to pass to the rke2 server command (the control plane).
+  # rke2_exec_server_args = "--kube-apiserver-arg enable-admission-plugins=PodTolerationRestriction,PodNodeSelector"
 
-  # Additional flags to pass to the k3s agent command (every agents nodes, including autoscaler nodepools).
-  # k3s_exec_agent_args = "--kubelet-arg kube-reserved=cpu=100m,memory=200Mi,ephemeral-storage=1Gi"
+  # Additional flags to pass to the rke2 agent command (every agents nodes, including autoscaler nodepools).
+  # rke2_exec_agent_args = "--kubelet-arg kube-reserved=cpu=100m,memory=200Mi,ephemeral-storage=1Gi"
 
-  # The vars below here passes it to the k3s config.yaml. This way it persist across reboots
+  # The vars below here passes it to the rke2 config.yaml. This way it persist across reboots
   # Make sure you set "feature-gates=NodeSwap=true,CloudDualStackNodeIPs=true" if want to use swap_size
-  # see https://github.com/k3s-io/k3s/issues/8811#issuecomment-1856974516
-  # k3s_global_kubelet_args = ["kube-reserved=cpu=100m,ephemeral-storage=1Gi", "system-reserved=cpu=memory=200Mi", "image-gc-high-threshold=50", "image-gc-low-threshold=40"]
-  # k3s_control_plane_kubelet_args = []
-  # k3s_agent_kubelet_args = []
-  # k3s_autoscaler_kubelet_args = []
+  # see https://github.com/rke2-io/rke2/issues/8811#issuecomment-1856974516
+  # rke2_global_kubelet_args = ["kube-reserved=cpu=100m,ephemeral-storage=1Gi", "system-reserved=cpu=memory=200Mi", "image-gc-high-threshold=50", "image-gc-low-threshold=40"]
+  # rke2_control_plane_kubelet_args = []
+  # rke2_agent_kubelet_args = []
+  # rke2_autoscaler_kubelet_args = []
 
   # If you want to allow all outbound traffic you can set this to "false". Default is "true".
   # restrict_outbound_traffic = false
@@ -753,9 +753,9 @@ module "kube-hetzner" {
   #   }
   # ]
 
-  # If you want to configure a different CNI for k3s, use this flag
+  # If you want to configure a different CNI for rke2, use this flag
   # possible values: flannel (Default), calico, and cilium
-  # As for Cilium, we allow infinite configurations via helm values, please check the CNI section of the readme over at https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/#cni.
+  # As for Cilium, we allow infinite configurations via helm values, please check the CNI section of the readme over at https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/#cni.
   # Also, see the cilium_values at towards the end of this file, in the advanced section.
   # ⚠️ Depending on your setup, sometimes you need your control-planes to have more than
   # 2GB of RAM if you are going to use Cilium, otherwise the pods will not start.
@@ -787,11 +787,11 @@ module "kube-hetzner" {
   # Please note that if you are getting 403s from Github, it's also useful to set the version manually. However there is rarely a need for that!
   # calico_version = "v3.27.2"
 
-  # If you want to disable the k3s kube-proxy, use this flag. The default is "false".
+  # If you want to disable the rke2 kube-proxy, use this flag. The default is "false".
   # Ensure that your CNI is capable of handling all the functionalities typically covered by kube-proxy.
   # disable_kube_proxy = true
 
-  # If you want to disable the k3s default network policy controller, use this flag!
+  # If you want to disable the rke2 default network policy controller, use this flag!
   # Both Calico and Cilium cni_plugin values override this value to true automatically, the default is "false".
   # disable_network_policy = true
 
@@ -827,7 +827,7 @@ module "kube-hetzner" {
 
   # Let's say you are not using the control plane LB solution above, and still want to have one hostname point to all your control-plane nodes.
   # You could create multiple A records of to let's say cp.cluster.my.org pointing to all of your control-plane nodes ips.
-  # In which case, you need to define that hostname in the k3s TLS-SANs config to allow connection through it. It can be hostnames or IP addresses.
+  # In which case, you need to define that hostname in the rke2 TLS-SANs config to allow connection through it. It can be hostnames or IP addresses.
   # additional_tls_sans = ["cp.cluster.my.org"]
 
   # If you create a hostname with multiple A records pointing to all of your
@@ -864,7 +864,7 @@ module "kube-hetzner" {
   # lb_hostname = "mycluster.domain.com"
 
   # You can enable Rancher (installed by Helm behind the scenes) with the following flag, the default is "false".
-  # ⚠️ Rancher often doesn't support the latest Kubernetes version. You will need to set initial_k3s_channel to a supported version.
+  # ⚠️ Rancher often doesn't support the latest Kubernetes version. You will need to set initial_rke2_channel to a supported version.
   # When Rancher is enabled, it automatically installs cert-manager too, and it uses rancher's own self-signed certificates.
   # See for options https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/install-upgrade-on-a-kubernetes-cluster#3-choose-your-ssl-configuration
   # The easiest thing is to leave everything as is (using the default rancher self-signed certificate) and put Cloudflare in front of it.
@@ -906,7 +906,7 @@ module "kube-hetzner" {
   # See working examples for extra manifests or a HelmChart in examples/kustomization_user_deploy/README.md
 
   # It is best practice to turn this off, but for backwards compatibility it is set to "true" by default.
-  # See https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/issues/349
+  # See https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/issues/349
   # When "false". The kubeconfig file can instead be created by executing: "terraform output --raw kubeconfig > cluster_kubeconfig.yaml"
   # Always be careful to not commit this file!
   # create_kubeconfig = false
@@ -1025,7 +1025,7 @@ service:
   enabled: true
   type: LoadBalancer
   annotations:
-    "load-balancer.hetzner.cloud/name": "k3s"
+    "load-balancer.hetzner.cloud/name": "rke2"
     "load-balancer.hetzner.cloud/use-private-ip": "true"
     "load-balancer.hetzner.cloud/disable-private-ingress": "true"
     "load-balancer.hetzner.cloud/location": "nbg1"
@@ -1076,7 +1076,7 @@ controller:
     "use-proxy-protocol": "true"
   service:
     annotations:
-      "load-balancer.hetzner.cloud/name": "k3s"
+      "load-balancer.hetzner.cloud/name": "rke2"
       "load-balancer.hetzner.cloud/use-private-ip": "true"
       "load-balancer.hetzner.cloud/disable-private-ingress": "true"
       "load-balancer.hetzner.cloud/location": "nbg1"
@@ -1120,7 +1120,7 @@ controller:
 
   # Override values given to the HAProxy helm chart.
   # All HAProxy helm values can be found at https://github.com/haproxytech/helm-charts/blob/main/kubernetes-ingress/values.yaml
-  # Default values can be found at https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/blob/master/locals.tf
+  # Default values can be found at https://github.com/CaptainPowerTurtle/terraform-hcloud-kube-hetzner-rke2/blob/master/locals.tf
   /*   haproxy_values = <<EOT
   EOT */
 

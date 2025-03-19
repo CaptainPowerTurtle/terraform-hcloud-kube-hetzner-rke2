@@ -32,7 +32,7 @@
 
 | Name | Type |
 |------|------|
-| [hcloud_firewall.k3s](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/firewall) | resource |
+| [hcloud_firewall.rke2](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/firewall) | resource |
 | [hcloud_floating_ip.agents](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/floating_ip) | resource |
 | [hcloud_floating_ip_assignment.agents](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/floating_ip_assignment) | resource |
 | [hcloud_load_balancer.cluster](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/load_balancer) | resource |
@@ -40,7 +40,7 @@
 | [hcloud_load_balancer_network.control_plane](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/load_balancer_network) | resource |
 | [hcloud_load_balancer_service.control_plane](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/load_balancer_service) | resource |
 | [hcloud_load_balancer_target.control_plane](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/load_balancer_target) | resource |
-| [hcloud_network.k3s](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/network) | resource |
+| [hcloud_network.rke2](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/network) | resource |
 | [hcloud_network_subnet.agent](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/network_subnet) | resource |
 | [hcloud_network_subnet.control_plane](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/network_subnet) | resource |
 | [hcloud_placement_group.agent](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/placement_group) | resource |
@@ -48,7 +48,7 @@
 | [hcloud_placement_group.control_plane](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/placement_group) | resource |
 | [hcloud_placement_group.control_plane_named](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/placement_group) | resource |
 | [hcloud_rdns.agents](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/rdns) | resource |
-| [hcloud_ssh_key.k3s](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/ssh_key) | resource |
+| [hcloud_ssh_key.rke2](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/ssh_key) | resource |
 | [hcloud_volume.longhorn_volume](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/volume) | resource |
 | [local_file.cert_manager_values](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
 | [local_file.cilium_values](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
@@ -72,7 +72,7 @@
 | [null_resource.kustomization](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.kustomization_user](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.kustomization_user_deploy](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [random_password.k3s_token](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [random_password.rke2_token](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_password.rancher_bootstrap](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [cloudinit_config.autoscaler_config](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs/data-sources/config) | data source |
 | [cloudinit_config.autoscaler_legacy_config](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs/data-sources/config) | data source |
@@ -82,7 +82,7 @@
 | [github_release.kured](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/release) | data source |
 | [hcloud_image.microos_arm_snapshot](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/data-sources/image) | data source |
 | [hcloud_image.microos_x86_snapshot](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/data-sources/image) | data source |
-| [hcloud_network.k3s](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/data-sources/network) | data source |
+| [hcloud_network.rke2](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/data-sources/network) | data source |
 | [hcloud_servers.autoscaled_nodes](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/data-sources/servers) | data source |
 | [hcloud_ssh_keys.keys_by_selector](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/data-sources/ssh_keys) | data source |
 | [remote_file.kubeconfig](https://registry.terraform.io/providers/tenstad/remote/latest/docs/data-sources/file) | data source |
@@ -91,14 +91,14 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_k3s_environment"></a> [additional\_k3s\_environment](#input\_additional\_k3s\_environment) | Additional environment variables for the k3s binary. See for example https://docs.k3s.io/advanced#configuring-an-http-proxy . | `map(any)` | `{}` | no |
+| <a name="input_additional_rke2_environment"></a> [additional\_rke2\_environment](#input\_additional\_rke2\_environment) | Additional environment variables for the rke2 binary. See for example https://docs.rke2.io/advanced#configuring-an-http-proxy . | `map(any)` | `{}` | no |
 | <a name="input_additional_tls_sans"></a> [additional\_tls\_sans](#input\_additional\_tls\_sans) | Additional TLS SANs to allow connection to control-plane through it. | `list(string)` | `[]` | no |
-| <a name="input_address_for_connectivity_test"></a> [address\_for\_connectivity\_test](#input\_address\_for\_connectivity\_test) | Before installing k3s, we actually verify that there is internet connectivity. By default we ping 1.1.1.1, but if you use a proxy, you may simply want to ping that proxy instead (assuming that the proxy has its own checks for internet connectivity). | `string` | `"1.1.1.1"` | no |
+| <a name="input_address_for_connectivity_test"></a> [address\_for\_connectivity\_test](#input\_address\_for\_connectivity\_test) | Before installing rke2, we actually verify that there is internet connectivity. By default we ping 1.1.1.1, but if you use a proxy, you may simply want to ping that proxy instead (assuming that the proxy has its own checks for internet connectivity). | `string` | `"1.1.1.1"` | no |
 | <a name="input_agent_nodepools"></a> [agent\_nodepools](#input\_agent\_nodepools) | Number of agent nodes. | <pre>list(object({<br/>    name                       = string<br/>    server_type                = string<br/>    location                   = string<br/>    backups                    = optional(bool)<br/>    floating_ip                = optional(bool)<br/>    floating_ip_rdns           = optional(string, null)<br/>    labels                     = list(string)<br/>    taints                     = list(string)<br/>    longhorn_volume_size       = optional(number)<br/>    swap_size                  = optional(string, "")<br/>    zram_size                  = optional(string, "")<br/>    kubelet_args               = optional(list(string), ["kube-reserved=cpu=50m,memory=300Mi,ephemeral-storage=1Gi", "system-reserved=cpu=250m,memory=300Mi"])<br/>    selinux                    = optional(bool, true)<br/>    placement_group_compat_idx = optional(number, 0)<br/>    placement_group            = optional(string, null)<br/>    count                      = optional(number, null)<br/>    nodes = optional(map(object({<br/>      server_type                = optional(string)<br/>      location                   = optional(string)<br/>      backups                    = optional(bool)<br/>      floating_ip                = optional(bool)<br/>      floating_ip_rdns           = optional(string, null)<br/>      labels                     = optional(list(string))<br/>      taints                     = optional(list(string))<br/>      longhorn_volume_size       = optional(number)<br/>      swap_size                  = optional(string, "")<br/>      zram_size                  = optional(string, "")<br/>      kubelet_args               = optional(list(string), ["kube-reserved=cpu=50m,memory=300Mi,ephemeral-storage=1Gi", "system-reserved=cpu=250m,memory=300Mi"])<br/>      selinux                    = optional(bool, true)<br/>      placement_group_compat_idx = optional(number, 0)<br/>      placement_group            = optional(string, null)<br/>      append_index_to_node_name  = optional(bool, true)<br/>    })))<br/>  }))</pre> | `[]` | no |
 | <a name="input_agent_nodes_custom_config"></a> [agent\_nodes\_custom\_config](#input\_agent\_nodes\_custom\_config) | Custom agent nodes configuration. | `any` | `{}` | no |
 | <a name="input_allow_scheduling_on_control_plane"></a> [allow\_scheduling\_on\_control\_plane](#input\_allow\_scheduling\_on\_control\_plane) | Whether to allow non-control-plane workloads to run on the control-plane nodes. | `bool` | `false` | no |
 | <a name="input_authentication_config"></a> [authentication\_config](#input\_authentication\_config) | Strucutred authentication configuration. This can be used to define external authentication providers. | `string` | `""` | no |
-| <a name="input_automatically_upgrade_k3s"></a> [automatically\_upgrade\_k3s](#input\_automatically\_upgrade\_k3s) | Whether to automatically upgrade k3s based on the selected channel. | `bool` | `true` | no |
+| <a name="input_automatically_upgrade_rke2"></a> [automatically\_upgrade\_rke2](#input\_automatically\_upgrade\_rke2) | Whether to automatically upgrade rke2 based on the selected channel. | `bool` | `true` | no |
 | <a name="input_automatically_upgrade_os"></a> [automatically\_upgrade\_os](#input\_automatically\_upgrade\_os) | Whether to enable or disable automatic os updates. Defaults to true. Should be disabled for single-node clusters | `bool` | `true` | no |
 | <a name="input_autoscaler_labels"></a> [autoscaler\_labels](#input\_autoscaler\_labels) | Labels for nodes created by the Cluster Autoscaler. | `list(string)` | `[]` | no |
 | <a name="input_autoscaler_nodepools"></a> [autoscaler\_nodepools](#input\_autoscaler\_nodepools) | Cluster autoscaler nodepools. | <pre>list(object({<br/>    name         = string<br/>    server_type  = string<br/>    location     = string<br/>    min_nodes    = number<br/>    max_nodes    = number<br/>    labels       = optional(map(string), {})<br/>    kubelet_args = optional(list(string), ["kube-reserved=cpu=50m,memory=300Mi,ephemeral-storage=1Gi", "system-reserved=cpu=250m,memory=300Mi"])<br/>    taints = optional(list(object({<br/>      key    = string<br/>      value  = string<br/>      effect = string<br/>    })), [])<br/>  }))</pre> | `[]` | no |
@@ -126,8 +126,8 @@
 | <a name="input_cluster_autoscaler_version"></a> [cluster\_autoscaler\_version](#input\_cluster\_autoscaler\_version) | Version of Kubernetes Cluster Autoscaler for Hetzner Cloud. Should be aligned with Kubernetes version. Available versions for the official image can be found at https://explore.ggcr.dev/?repo=registry.k8s.io%2Fautoscaling%2Fcluster-autoscaler. | `string` | `"v1.31.5"` | no |
 | <a name="input_cluster_dns_ipv4"></a> [cluster\_dns\_ipv4](#input\_cluster\_dns\_ipv4) | Internal Service IPv4 address of core-dns. | `string` | `"10.43.0.10"` | no |
 | <a name="input_cluster_ipv4_cidr"></a> [cluster\_ipv4\_cidr](#input\_cluster\_ipv4\_cidr) | Internal Pod CIDR, used for the controller and currently for calico/cilium. | `string` | `"10.42.0.0/16"` | no |
-| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster. | `string` | `"k3s"` | no |
-| <a name="input_cni_plugin"></a> [cni\_plugin](#input\_cni\_plugin) | CNI plugin for k3s. | `string` | `"flannel"` | no |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the cluster. | `string` | `"rke2"` | no |
+| <a name="input_cni_plugin"></a> [cni\_plugin](#input\_cni\_plugin) | CNI plugin for rke2. | `string` | `"flannel"` | no |
 | <a name="input_control_plane_lb_enable_public_interface"></a> [control\_plane\_lb\_enable\_public\_interface](#input\_control\_plane\_lb\_enable\_public\_interface) | Enable or disable public interface for the control plane load balancer . Defaults to true. | `bool` | `true` | no |
 | <a name="input_control_plane_lb_type"></a> [control\_plane\_lb\_type](#input\_control\_plane\_lb\_type) | The type of load balancer to use for the control plane load balancer. Defaults to lb11, which is the cheapest one. | `string` | `"lb11"` | no |
 | <a name="input_control_plane_nodepools"></a> [control\_plane\_nodepools](#input\_control\_plane\_nodepools) | Number of control plane nodes. | <pre>list(object({<br/>    name                       = string<br/>    server_type                = string<br/>    location                   = string<br/>    backups                    = optional(bool)<br/>    labels                     = list(string)<br/>    taints                     = list(string)<br/>    count                      = number<br/>    swap_size                  = optional(string, "")<br/>    zram_size                  = optional(string, "")<br/>    kubelet_args               = optional(list(string), ["kube-reserved=cpu=250m,memory=1500Mi,ephemeral-storage=1Gi", "system-reserved=cpu=250m,memory=300Mi"])<br/>    selinux                    = optional(bool, true)<br/>    placement_group_compat_idx = optional(number, 0)<br/>    placement_group            = optional(string, null)<br/>  }))</pre> | `[]` | no |
@@ -138,8 +138,8 @@
 | <a name="input_csi_driver_smb_values"></a> [csi\_driver\_smb\_values](#input\_csi\_driver\_smb\_values) | Additional helm values file to pass to csi-driver-smb as 'valuesContent' at the HelmChart. | `string` | `""` | no |
 | <a name="input_csi_driver_smb_version"></a> [csi\_driver\_smb\_version](#input\_csi\_driver\_smb\_version) | Version of csi\_driver\_smb. See https://github.com/kubernetes-csi/csi-driver-smb/releases for the available versions. | `string` | `"*"` | no |
 | <a name="input_disable_hetzner_csi"></a> [disable\_hetzner\_csi](#input\_disable\_hetzner\_csi) | Disable hetzner csi driver. | `bool` | `false` | no |
-| <a name="input_disable_kube_proxy"></a> [disable\_kube\_proxy](#input\_disable\_kube\_proxy) | Disable kube-proxy in K3s (default false). | `bool` | `false` | no |
-| <a name="input_disable_network_policy"></a> [disable\_network\_policy](#input\_disable\_network\_policy) | Disable k3s default network policy controller (default false, automatically true for calico and cilium). | `bool` | `false` | no |
+| <a name="input_disable_kube_proxy"></a> [disable\_kube\_proxy](#input\_disable\_kube\_proxy) | Disable kube-proxy in rke2 (default false). | `bool` | `false` | no |
+| <a name="input_disable_network_policy"></a> [disable\_network\_policy](#input\_disable\_network\_policy) | Disable rke2 default network policy controller (default false, automatically true for calico and cilium). | `bool` | `false` | no |
 | <a name="input_disable_selinux"></a> [disable\_selinux](#input\_disable\_selinux) | Disable SELinux on all nodes. | `bool` | `false` | no |
 | <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | IP Addresses to use for the DNS Servers, set to an empty list to use the ones provided by Hetzner. The length is limited to 3 entries, more entries is not supported by kubernetes | `list(string)` | <pre>[<br/>  "185.12.64.1",<br/>  "185.12.64.2",<br/>  "2a01:4ff:ff00::add:1"<br/>]</pre> | no |
 | <a name="input_enable_cert_manager"></a> [enable\_cert\_manager](#input\_enable\_cert\_manager) | Enable cert manager. | `bool` | `true` | no |
@@ -147,9 +147,9 @@
 | <a name="input_enable_delete_protection"></a> [enable\_delete\_protection](#input\_enable\_delete\_protection) | Enable or disable delete protection for resources in Hetzner Cloud. | <pre>object({<br/>    floating_ip   = optional(bool, false)<br/>    load_balancer = optional(bool, false)<br/>    volume        = optional(bool, false)<br/>  })</pre> | <pre>{<br/>  "floating_ip": false,<br/>  "load_balancer": false,<br/>  "volume": false<br/>}</pre> | no |
 | <a name="input_enable_iscsid"></a> [enable\_iscsid](#input\_enable\_iscsid) | This is always true when enable\_longhorn=true, however, you may also want this enabled if you perform your own installation of longhorn after this module runs. | `bool` | `false` | no |
 | <a name="input_enable_klipper_metal_lb"></a> [enable\_klipper\_metal\_lb](#input\_enable\_klipper\_metal\_lb) | Use klipper load balancer. | `bool` | `false` | no |
-| <a name="input_enable_local_storage"></a> [enable\_local\_storage](#input\_enable\_local\_storage) | Whether to enable or disable k3s local-storage. Warning: when enabled, there will be two default storage classes: "local-path" and "hcloud-volumes"! | `bool` | `false` | no |
+| <a name="input_enable_local_storage"></a> [enable\_local\_storage](#input\_enable\_local\_storage) | Whether to enable or disable rke2 local-storage. Warning: when enabled, there will be two default storage classes: "local-path" and "hcloud-volumes"! | `bool` | `false` | no |
 | <a name="input_enable_longhorn"></a> [enable\_longhorn](#input\_enable\_longhorn) | Whether or not to enable Longhorn. | `bool` | `false` | no |
-| <a name="input_enable_metrics_server"></a> [enable\_metrics\_server](#input\_enable\_metrics\_server) | Whether to enable or disable k3s metric server. | `bool` | `true` | no |
+| <a name="input_enable_metrics_server"></a> [enable\_metrics\_server](#input\_enable\_metrics\_server) | Whether to enable or disable rke2 metric server. | `bool` | `true` | no |
 | <a name="input_enable_rancher"></a> [enable\_rancher](#input\_enable\_rancher) | Enable rancher. | `bool` | `false` | no |
 | <a name="input_enable_wireguard"></a> [enable\_wireguard](#input\_enable\_wireguard) | Use wireguard-native as the backend for CNI. | `bool` | `false` | no |
 | <a name="input_etcd_s3_backup"></a> [etcd\_s3\_backup](#input\_etcd\_s3\_backup) | Etcd cluster state backup to S3 storage | `map(any)` | `{}` | no |
@@ -174,16 +174,16 @@
 | <a name="input_ingress_max_replica_count"></a> [ingress\_max\_replica\_count](#input\_ingress\_max\_replica\_count) | Number of maximum replicas per ingress controller. Used for ingress HPA. Must be higher than number of replicas. | `number` | `10` | no |
 | <a name="input_ingress_replica_count"></a> [ingress\_replica\_count](#input\_ingress\_replica\_count) | Number of replicas per ingress controller. 0 means autodetect based on the number of agent nodes. | `number` | `0` | no |
 | <a name="input_ingress_target_namespace"></a> [ingress\_target\_namespace](#input\_ingress\_target\_namespace) | The namespace to deploy the ingress controller to. Defaults to ingress name. | `string` | `""` | no |
-| <a name="input_initial_k3s_channel"></a> [initial\_k3s\_channel](#input\_initial\_k3s\_channel) | Allows you to specify an initial k3s channel. See https://update.k3s.io/v1-release/channels for available channels. | `string` | `"v1.31"` | no |
-| <a name="input_install_k3s_version"></a> [install\_k3s\_version](#input\_install\_k3s\_version) | Allows you to specify the k3s version (Example: v1.29.6+k3s2). Supersedes initial\_k3s\_channel. See https://github.com/k3s-io/k3s/releases for available versions. | `string` | `""` | no |
-| <a name="input_k3s_agent_kubelet_args"></a> [k3s\_agent\_kubelet\_args](#input\_k3s\_agent\_kubelet\_args) | Kubelet args for agent nodes. | `list(string)` | `[]` | no |
-| <a name="input_k3s_autoscaler_kubelet_args"></a> [k3s\_autoscaler\_kubelet\_args](#input\_k3s\_autoscaler\_kubelet\_args) | Kubelet args for autoscaler nodes. | `list(string)` | `[]` | no |
-| <a name="input_k3s_control_plane_kubelet_args"></a> [k3s\_control\_plane\_kubelet\_args](#input\_k3s\_control\_plane\_kubelet\_args) | Kubelet args for control plane nodes. | `list(string)` | `[]` | no |
-| <a name="input_k3s_exec_agent_args"></a> [k3s\_exec\_agent\_args](#input\_k3s\_exec\_agent\_args) | Agents nodes are started with `k3s agent {k3s_exec_agent_args}`. Use this to add kubelet-arg for example. | `string` | `""` | no |
-| <a name="input_k3s_exec_server_args"></a> [k3s\_exec\_server\_args](#input\_k3s\_exec\_server\_args) | The control plane is started with `k3s server {k3s_exec_server_args}`. Use this to add kube-apiserver-arg for example. | `string` | `""` | no |
-| <a name="input_k3s_global_kubelet_args"></a> [k3s\_global\_kubelet\_args](#input\_k3s\_global\_kubelet\_args) | Global kubelet args for all nodes. | `list(string)` | `[]` | no |
-| <a name="input_k3s_registries"></a> [k3s\_registries](#input\_k3s\_registries) | K3S registries.yml contents. It used to access private docker registries. | `string` | `" "` | no |
-| <a name="input_k3s_token"></a> [k3s\_token](#input\_k3s\_token) | k3s master token (must match when restoring a cluster). | `string` | `null` | no |
+| <a name="input_initial_rke2_channel"></a> [initial\_rke2\_channel](#input\_initial\_rke2\_channel) | Allows you to specify an initial rke2 channel. See https://update.rke2.io/v1-release/channels for available channels. | `string` | `"v1.31"` | no |
+| <a name="input_install_rke2_version"></a> [install\_rke2\_version](#input\_install\_rke2\_version) | Allows you to specify the rke2 version (Example: v1.29.6+rke22). Supersedes initial\_rke2\_channel. See https://github.com/rke2-io/rke2/releases for available versions. | `string` | `""` | no |
+| <a name="input_rke2_agent_kubelet_args"></a> [rke2\_agent\_kubelet\_args](#input\_rke2\_agent\_kubelet\_args) | Kubelet args for agent nodes. | `list(string)` | `[]` | no |
+| <a name="input_rke2_autoscaler_kubelet_args"></a> [rke2\_autoscaler\_kubelet\_args](#input\_rke2\_autoscaler\_kubelet\_args) | Kubelet args for autoscaler nodes. | `list(string)` | `[]` | no |
+| <a name="input_rke2_control_plane_kubelet_args"></a> [rke2\_control\_plane\_kubelet\_args](#input\_rke2\_control\_plane\_kubelet\_args) | Kubelet args for control plane nodes. | `list(string)` | `[]` | no |
+| <a name="input_rke2_exec_agent_args"></a> [rke2\_exec\_agent\_args](#input\_rke2\_exec\_agent\_args) | Agents nodes are started with `rke2 agent {rke2_exec_agent_args}`. Use this to add kubelet-arg for example. | `string` | `""` | no |
+| <a name="input_rke2_exec_server_args"></a> [rke2\_exec\_server\_args](#input\_rke2\_exec\_server\_args) | The control plane is started with `rke2 server {rke2_exec_server_args}`. Use this to add kube-apiserver-arg for example. | `string` | `""` | no |
+| <a name="input_rke2_global_kubelet_args"></a> [rke2\_global\_kubelet\_args](#input\_rke2\_global\_kubelet\_args) | Global kubelet args for all nodes. | `list(string)` | `[]` | no |
+| <a name="input_rke2_registries"></a> [rke2\_registries](#input\_rke2\_registries) | rke2 registries.yml contents. It used to access private docker registries. | `string` | `" "` | no |
+| <a name="input_rke2_token"></a> [rke2\_token](#input\_rke2\_token) | rke2 master token (must match when restoring a cluster). | `string` | `null` | no |
 | <a name="input_keep_disk_agents"></a> [keep\_disk\_agents](#input\_keep\_disk\_agents) | Whether to keep OS disks of nodes the same size when upgrading an agent node | `bool` | `false` | no |
 | <a name="input_keep_disk_cp"></a> [keep\_disk\_cp](#input\_keep\_disk\_cp) | Whether to keep OS disks of nodes the same size when upgrading a control-plane node | `bool` | `false` | no |
 | <a name="input_kubeconfig_server_address"></a> [kubeconfig\_server\_address](#input\_kubeconfig\_server\_address) | The hostname used for kubeconfig. | `string` | `""` | no |
@@ -229,8 +229,8 @@
 | <a name="input_ssh_port"></a> [ssh\_port](#input\_ssh\_port) | The main SSH port to connect to the nodes. | `number` | `22` | no |
 | <a name="input_ssh_private_key"></a> [ssh\_private\_key](#input\_ssh\_private\_key) | SSH private Key. | `string` | n/a | yes |
 | <a name="input_ssh_public_key"></a> [ssh\_public\_key](#input\_ssh\_public\_key) | SSH public Key. | `string` | n/a | yes |
-| <a name="input_sys_upgrade_controller_version"></a> [sys\_upgrade\_controller\_version](#input\_sys\_upgrade\_controller\_version) | Version of the System Upgrade Controller for automated upgrades of k3s. See https://github.com/rancher/system-upgrade-controller/releases for the available versions. | `string` | `"v0.14.2"` | no |
-| <a name="input_system_upgrade_enable_eviction"></a> [system\_upgrade\_enable\_eviction](#input\_system\_upgrade\_enable\_eviction) | Whether to directly delete pods during system upgrade (k3s) or evict them. Defaults to true. Disable this on small clusters to avoid system upgrades hanging since pods resisting eviction keep node unschedulable forever. NOTE: turning this off, introduces potential downtime of services of the upgraded nodes. | `bool` | `true` | no |
+| <a name="input_sys_upgrade_controller_version"></a> [sys\_upgrade\_controller\_version](#input\_sys\_upgrade\_controller\_version) | Version of the System Upgrade Controller for automated upgrades of rke2. See https://github.com/rancher/system-upgrade-controller/releases for the available versions. | `string` | `"v0.14.2"` | no |
+| <a name="input_system_upgrade_enable_eviction"></a> [system\_upgrade\_enable\_eviction](#input\_system\_upgrade\_enable\_eviction) | Whether to directly delete pods during system upgrade (rke2) or evict them. Defaults to true. Disable this on small clusters to avoid system upgrades hanging since pods resisting eviction keep node unschedulable forever. NOTE: turning this off, introduces potential downtime of services of the upgraded nodes. | `bool` | `true` | no |
 | <a name="input_system_upgrade_use_drain"></a> [system\_upgrade\_use\_drain](#input\_system\_upgrade\_use\_drain) | Wether using drain (true, the default), which will deletes and transfers all pods to other nodes before a node is being upgraded, or cordon (false), which just prevents schedulung new pods on the node during upgrade and keeps all pods running | `bool` | `true` | no |
 | <a name="input_traefik_additional_options"></a> [traefik\_additional\_options](#input\_traefik\_additional\_options) | Additional options to pass to Traefik as a list of strings. These are the ones that go into the additionalArguments section of the Traefik helm values file. | `list(string)` | `[]` | no |
 | <a name="input_traefik_additional_ports"></a> [traefik\_additional\_ports](#input\_traefik\_additional\_ports) | Additional ports to pass to Traefik. These are the ones that go into the ports section of the Traefik helm values file. | <pre>list(object({<br/>    name        = string<br/>    port        = number<br/>    exposedPort = number<br/>  }))</pre> | `[]` | no |
@@ -263,8 +263,8 @@
 | <a name="output_haproxy_values"></a> [haproxy\_values](#output\_haproxy\_values) | Helm values.yaml used for HAProxy |
 | <a name="output_ingress_public_ipv4"></a> [ingress\_public\_ipv4](#output\_ingress\_public\_ipv4) | The public IPv4 address of the Hetzner load balancer (with fallback to first control plane node) |
 | <a name="output_ingress_public_ipv6"></a> [ingress\_public\_ipv6](#output\_ingress\_public\_ipv6) | The public IPv6 address of the Hetzner load balancer (with fallback to first control plane node) |
-| <a name="output_k3s_endpoint"></a> [k3s\_endpoint](#output\_k3s\_endpoint) | A controller endpoint to register new nodes |
-| <a name="output_k3s_token"></a> [k3s\_token](#output\_k3s\_token) | The k3s token to register new nodes |
+| <a name="output_rke2_endpoint"></a> [rke2\_endpoint](#output\_rke2\_endpoint) | A controller endpoint to register new nodes |
+| <a name="output_rke2_token"></a> [rke2\_token](#output\_rke2\_token) | The rke2 token to register new nodes |
 | <a name="output_kubeconfig"></a> [kubeconfig](#output\_kubeconfig) | Kubeconfig file content with external IP address |
 | <a name="output_kubeconfig_data"></a> [kubeconfig\_data](#output\_kubeconfig\_data) | Structured kubeconfig data to supply to other providers |
 | <a name="output_kubeconfig_file"></a> [kubeconfig\_file](#output\_kubeconfig\_file) | Kubeconfig file content with external IP address |

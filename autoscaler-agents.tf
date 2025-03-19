@@ -36,10 +36,10 @@ locals {
       cluster_autoscaler_stderr_threshold        = var.cluster_autoscaler_stderr_threshold
       cluster_autoscaler_server_creation_timeout = tostring(var.cluster_autoscaler_server_creation_timeout)
       ssh_key                                    = local.hcloud_ssh_key_id
-      ipv4_subnet_id                             = data.hcloud_network.k3s.id
+      ipv4_subnet_id                             = data.hcloud_network.rke2.id
       snapshot_id                                = local.first_nodepool_snapshot_id
       cluster_config                             = base64encode(jsonencode(local.cluster_config))
-      firewall_id                                = hcloud_firewall.k3s.id
+      firewall_id                                = hcloud_firewall.rke2.id
       cluster_name                               = local.cluster_prefix
       node_pools                                 = var.autoscaler_nodepools
   })
@@ -101,16 +101,16 @@ data "cloudinit_config" "autoscaler_config" {
       {
         hostname          = "autoscaler"
         sshAuthorizedKeys = concat([var.ssh_public_key], var.ssh_additional_public_keys)
-        k3s_config = yamlencode({
-          server        = "https://${var.use_control_plane_lb ? hcloud_load_balancer_network.control_plane.*.ip[0] : module.control_planes[keys(module.control_planes)[0]].private_ipv4_address}:6443"
-          token         = local.k3s_token
-          kubelet-arg   = concat(local.kubelet_arg, var.k3s_global_kubelet_args, var.k3s_autoscaler_kubelet_args, var.autoscaler_nodepools[count.index].kubelet_args)
+        rke2_config = yamlencode({
+          server        = "https://${var.use_control_plane_lb ? hcloud_load_balancer_network.control_plane.*.ip[0] : module.control_planes[keys(module.control_planes)[0]].private_ipv4_address}:9345"
+          token         = local.rke2_token
+          kubelet-arg   = concat(local.kubelet_arg, var.rke2_global_kubelet_args, var.rke2_autoscaler_kubelet_args, var.autoscaler_nodepools[count.index].kubelet_args)
           flannel-iface = local.flannel_iface
           node-label    = concat(local.default_agent_labels, [for k, v in var.autoscaler_nodepools[count.index].labels : "${k}=${v}"])
           node-taint    = concat(local.default_agent_taints, [for taint in var.autoscaler_nodepools[count.index].taints : "${taint.key}=${taint.value}:${taint.effect}"])
           selinux       = true
         })
-        install_k3s_agent_script     = join("\n", concat(local.install_k3s_agent, ["systemctl start k3s-agent"]))
+        install_rke2_agent_script     = join("\n", concat(local.install_rke2_agent, ["systemctl start rke2-agent"]))
         cloudinit_write_files_common = local.cloudinit_write_files_common
         cloudinit_runcmd_common      = local.cloudinit_runcmd_common
       }
@@ -133,16 +133,16 @@ data "cloudinit_config" "autoscaler_legacy_config" {
       {
         hostname          = "autoscaler"
         sshAuthorizedKeys = concat([var.ssh_public_key], var.ssh_additional_public_keys)
-        k3s_config = yamlencode({
-          server        = "https://${var.use_control_plane_lb ? hcloud_load_balancer_network.control_plane.*.ip[0] : module.control_planes[keys(module.control_planes)[0]].private_ipv4_address}:6443"
-          token         = local.k3s_token
+        rke2_config = yamlencode({
+          server        = "https://${var.use_control_plane_lb ? hcloud_load_balancer_network.control_plane.*.ip[0] : module.control_planes[keys(module.control_planes)[0]].private_ipv4_address}:9345"
+          token         = local.rke2_token
           kubelet-arg   = local.kubelet_arg
           flannel-iface = local.flannel_iface
           node-label    = concat(local.default_agent_labels, var.autoscaler_labels)
           node-taint    = concat(local.default_agent_taints, var.autoscaler_taints)
           selinux       = true
         })
-        install_k3s_agent_script     = join("\n", concat(local.install_k3s_agent, ["systemctl start k3s-agent"]))
+        install_rke2_agent_script     = join("\n", concat(local.install_rke2_agent, ["systemctl start rke2-agent"]))
         cloudinit_write_files_common = local.cloudinit_write_files_common
         cloudinit_runcmd_common      = local.cloudinit_runcmd_common
       }
@@ -158,7 +158,7 @@ data "hcloud_servers" "autoscaled_nodes" {
 resource "null_resource" "autoscaled_nodes_registries" {
   for_each = local.autoscaled_nodes
   triggers = {
-    registries = var.k3s_registries
+    registries = var.rke2_registries
   }
 
   connection {
@@ -170,11 +170,11 @@ resource "null_resource" "autoscaled_nodes_registries" {
   }
 
   provisioner "file" {
-    content     = var.k3s_registries
+    content     = var.rke2_registries
     destination = "/tmp/registries.yaml"
   }
 
   provisioner "remote-exec" {
-    inline = [local.k3s_registries_update_script]
+    inline = [local.rke2_registries_update_script]
   }
 }

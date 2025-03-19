@@ -98,7 +98,7 @@ resource "hcloud_server" "server" {
 
 resource "null_resource" "registries" {
   triggers = {
-    registries = var.k3s_registries
+    registries = var.rke2_registries
   }
 
   connection {
@@ -110,12 +110,12 @@ resource "null_resource" "registries" {
   }
 
   provisioner "file" {
-    content     = var.k3s_registries
+    content     = var.rke2_registries
     destination = "/tmp/registries.yaml"
   }
 
   provisioner "remote-exec" {
-    inline = [var.k3s_registries_update_script]
+    inline = [var.rke2_registries_update_script]
   }
 
   depends_on = [hcloud_server.server]
@@ -178,7 +178,7 @@ swapoff /dev/zram0
 
 rmmod zram
     EOT
-    destination = "/usr/local/bin/k3s-swapoff"
+    destination = "/usr/local/bin/rke2-swapoff"
   }
 
   provisioner "file" {
@@ -199,7 +199,7 @@ mkswap /dev/zram0
 # Switch the swaps on
 swapon -p 100 /dev/zram0
     EOT
-    destination = "/usr/local/bin/k3s-swapon"
+    destination = "/usr/local/bin/rke2-swapon"
   }
 
   # Setup zram if it's enabled
@@ -212,8 +212,8 @@ After=multi-user.target
 [Service]
 Type=oneshot
 RemainAfterExit=true
-ExecStart=/usr/local/bin/k3s-swapon
-ExecStop=/usr/local/bin/k3s-swapoff
+ExecStart=/usr/local/bin/rke2-swapon
+ExecStop=/usr/local/bin/rke2-swapoff
 
 [Install]
 WantedBy=multi-user.target
@@ -223,8 +223,8 @@ WantedBy=multi-user.target
 
   provisioner "remote-exec" {
     inline = concat(var.zram_size != "" ? [
-      "chmod +x /usr/local/bin/k3s-swapon",
-      "chmod +x /usr/local/bin/k3s-swapoff",
+      "chmod +x /usr/local/bin/rke2-swapon",
+      "chmod +x /usr/local/bin/rke2-swapoff",
       "systemctl disable --now zram.service",
       "systemctl enable --now zram.service",
       ] : [

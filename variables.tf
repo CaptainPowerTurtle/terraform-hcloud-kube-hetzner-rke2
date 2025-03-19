@@ -4,8 +4,8 @@ variable "hcloud_token" {
   sensitive   = true
 }
 
-variable "k3s_token" {
-  description = "k3s master token (must match when restoring a cluster)."
+variable "rke2_token" {
+  description = "rke2 master token (must match when restoring a cluster)."
   type        = string
   sensitive   = true
   default     = null
@@ -563,30 +563,30 @@ variable "allow_scheduling_on_control_plane" {
 variable "enable_metrics_server" {
   type        = bool
   default     = true
-  description = "Whether to enable or disable k3s metric server."
+  description = "Whether to enable or disable rke2 metric server."
 }
 
-variable "initial_k3s_channel" {
+variable "initial_rke2_channel" {
   type        = string
   default     = "v1.31" # Please update kube.tf.example too when changing this variable
-  description = "Allows you to specify an initial k3s channel. See https://update.k3s.io/v1-release/channels for available channels."
+  description = "Allows you to specify an initial rke2 channel. See https://update.rke2.io/v1-release/channels for available channels."
 
   validation {
-    condition     = contains(["stable", "latest", "testing", "v1.16", "v1.17", "v1.18", "v1.19", "v1.20", "v1.21", "v1.22", "v1.23", "v1.24", "v1.25", "v1.26", "v1.27", "v1.28", "v1.29", "v1.30", "v1.31", "v1.32", "v1.33"], var.initial_k3s_channel)
-    error_message = "The initial k3s channel must be one of stable, latest or testing, or any of the minor kube versions like v1.26."
+    condition     = contains(["stable", "latest", "testing", "v1.16", "v1.17", "v1.18", "v1.19", "v1.20", "v1.21", "v1.22", "v1.23", "v1.24", "v1.25", "v1.26", "v1.27", "v1.28", "v1.29", "v1.30", "v1.31", "v1.32", "v1.33"], var.initial_rke2_channel)
+    error_message = "The initial rke2 channel must be one of stable, latest or testing, or any of the minor kube versions like v1.26."
   }
 }
 
-variable "install_k3s_version" {
+variable "install_rke2_version" {
   type        = string
   default     = ""
-  description = "Allows you to specify the k3s version (Example: v1.29.6+k3s2). Supersedes initial_k3s_channel. See https://github.com/k3s-io/k3s/releases for available versions."
+  description = "Allows you to specify the rke2 version (Example: v1.29.6+rke22). Supersedes initial_rke2_channel. See https://github.com/rke2-io/rke2/releases for available versions."
 }
 
 variable "system_upgrade_enable_eviction" {
   type        = bool
   default     = true
-  description = "Whether to directly delete pods during system upgrade (k3s) or evict them. Defaults to true. Disable this on small clusters to avoid system upgrades hanging since pods resisting eviction keep node unschedulable forever. NOTE: turning this off, introduces potential downtime of services of the upgraded nodes."
+  description = "Whether to directly delete pods during system upgrade (rke2) or evict them. Defaults to true. Disable this on small clusters to avoid system upgrades hanging since pods resisting eviction keep node unschedulable forever. NOTE: turning this off, introduces potential downtime of services of the upgraded nodes."
 }
 
 variable "system_upgrade_use_drain" {
@@ -595,10 +595,10 @@ variable "system_upgrade_use_drain" {
   description = "Wether using drain (true, the default), which will deletes and transfers all pods to other nodes before a node is being upgraded, or cordon (false), which just prevents schedulung new pods on the node during upgrade and keeps all pods running"
 }
 
-variable "automatically_upgrade_k3s" {
+variable "automatically_upgrade_rke2" {
   type        = bool
   default     = true
-  description = "Whether to automatically upgrade k3s based on the selected channel."
+  description = "Whether to automatically upgrade rke2 based on the selected channel."
 }
 
 variable "automatically_upgrade_os" {
@@ -633,7 +633,7 @@ variable "use_cluster_name_in_node_name" {
 
 variable "cluster_name" {
   type        = string
-  default     = "k3s"
+  default     = "rke2"
   description = "Name of the cluster."
 
   validation {
@@ -662,19 +662,19 @@ variable "placement_group_disable" {
 variable "disable_kube_proxy" {
   type        = bool
   default     = false
-  description = "Disable kube-proxy in K3s (default false)."
+  description = "Disable kube-proxy in rke2 (default false)."
 }
 
 variable "disable_network_policy" {
   type        = bool
   default     = false
-  description = "Disable k3s default network policy controller (default false, automatically true for calico and cilium)."
+  description = "Disable rke2 default network policy controller (default false, automatically true for calico and cilium)."
 }
 
 variable "cni_plugin" {
   type        = string
   default     = "flannel"
-  description = "CNI plugin for k3s."
+  description = "CNI plugin for rke2."
 
   validation {
     condition     = contains(["flannel", "calico", "cilium"], var.cni_plugin)
@@ -993,13 +993,13 @@ variable "dns_servers" {
 variable "address_for_connectivity_test" {
   type        = string
   default     = "1.1.1.1"
-  description = "Before installing k3s, we actually verify that there is internet connectivity. By default we ping 1.1.1.1, but if you use a proxy, you may simply want to ping that proxy instead (assuming that the proxy has its own checks for internet connectivity)."
+  description = "Before installing rke2, we actually verify that there is internet connectivity. By default we ping 1.1.1.1, but if you use a proxy, you may simply want to ping that proxy instead (assuming that the proxy has its own checks for internet connectivity)."
 }
 
-variable "additional_k3s_environment" {
+variable "additional_rke2_environment" {
   type        = map(any)
   default     = {}
-  description = "Additional environment variables for the k3s binary. See for example https://docs.k3s.io/advanced#configuring-an-http-proxy ."
+  description = "Additional environment variables for the rke2 binary. See for example https://docs.rke2.io/advanced#configuring-an-http-proxy ."
 }
 
 variable "preinstall_exec" {
@@ -1063,8 +1063,8 @@ variable "agent_nodes_custom_config" {
   description = "Custom agent nodes configuration."
 }
 
-variable "k3s_registries" {
-  description = "K3S registries.yml contents. It used to access private docker registries."
+variable "rke2_registries" {
+  description = "rke2 registries.yml contents. It used to access private docker registries."
   default     = " "
   type        = string
 }
@@ -1081,37 +1081,37 @@ variable "calico_version" {
   description = "Version of Calico. See https://github.com/projectcalico/calico/releases for the available versions."
 }
 
-variable "k3s_exec_server_args" {
+variable "rke2_exec_server_args" {
   type        = string
   default     = ""
-  description = "The control plane is started with `k3s server {k3s_exec_server_args}`. Use this to add kube-apiserver-arg for example."
+  description = "The control plane is started with `rke2 server {rke2_exec_server_args}`. Use this to add kube-apiserver-arg for example."
 }
 
-variable "k3s_exec_agent_args" {
+variable "rke2_exec_agent_args" {
   type        = string
   default     = ""
-  description = "Agents nodes are started with `k3s agent {k3s_exec_agent_args}`. Use this to add kubelet-arg for example."
+  description = "Agents nodes are started with `rke2 agent {rke2_exec_agent_args}`. Use this to add kubelet-arg for example."
 }
 
-variable "k3s_global_kubelet_args" {
+variable "rke2_global_kubelet_args" {
   type        = list(string)
   default     = []
   description = "Global kubelet args for all nodes."
 }
 
-variable "k3s_control_plane_kubelet_args" {
+variable "rke2_control_plane_kubelet_args" {
   type        = list(string)
   default     = []
   description = "Kubelet args for control plane nodes."
 }
 
-variable "k3s_agent_kubelet_args" {
+variable "rke2_agent_kubelet_args" {
   type        = list(string)
   default     = []
   description = "Kubelet args for agent nodes."
 }
 
-variable "k3s_autoscaler_kubelet_args" {
+variable "rke2_autoscaler_kubelet_args" {
   type        = list(string)
   default     = []
   description = "Kubelet args for autoscaler nodes."
@@ -1126,7 +1126,7 @@ variable "ingress_target_namespace" {
 variable "enable_local_storage" {
   type        = bool
   default     = false
-  description = "Whether to enable or disable k3s local-storage. Warning: when enabled, there will be two default storage classes: \"local-path\" and \"hcloud-volumes\"!"
+  description = "Whether to enable or disable rke2 local-storage. Warning: when enabled, there will be two default storage classes: \"local-path\" and \"hcloud-volumes\"!"
 }
 
 variable "disable_selinux" {
@@ -1165,5 +1165,5 @@ variable "keep_disk_cp" {
 variable "sys_upgrade_controller_version" {
   type        = string
   default     = "v0.14.2"
-  description = "Version of the System Upgrade Controller for automated upgrades of k3s. See https://github.com/rancher/system-upgrade-controller/releases for the available versions."
+  description = "Version of the System Upgrade Controller for automated upgrades of rke2. See https://github.com/rancher/system-upgrade-controller/releases for the available versions."
 }

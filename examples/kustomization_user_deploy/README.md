@@ -41,7 +41,7 @@ For a full demo see the [simple-resources](simple-resources/) example.
 
 ### Deploying a Helm Chart
 
-If you want to deploy a Helm chart to your cluster, you can use the [Helm Chart controller](https://docs.k3s.io/helm) included in K3s. The Helm Chart controller provides the CRDs `HelmChart` and `HelmChartConfig`.
+If you want to deploy a Helm chart to your cluster, you can use the [Helm Chart controller](https://docs.rke2.io/helm) included in rke2. The Helm Chart controller provides the CRDs `HelmChart` and `HelmChartConfig`.
 
 For a full demo see the [helm-chart](helm-chart/) example.
 
