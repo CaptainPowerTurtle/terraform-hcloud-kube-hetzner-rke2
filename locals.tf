@@ -111,19 +111,19 @@ locals {
   apply_rke2_selinux = ["/sbin/semodule -v -i /usr/share/selinux/packages/rke2.pp"]
   swap_node_label   = ["node.kubernetes.io/server-swap=enabled"]
 
-  rke2_install_command = "curl -sfL https://get.rke2.io  | INSTALL_rke2_SKIP_SELINUX_RPM=true %{if var.install_rke2_version == ""}INSTALL_RKE2_CHANNEL=${var.initial_rke2_channel}%{else}INSTALL_RKE2_VERSION=${var.install_rke2_version}%{endif} INSTALL_rke2_EXEC='%s' sh -"
+  rke2_install_command = "curl -sfL https://get.rke2.io  | %{if var.install_rke2_version == ""}INSTALL_RKE2_CHANNEL=${var.initial_rke2_channel}%{else}INSTALL_RKE2_VERSION=${var.install_rke2_version}%{endif} INSTALL_rke2_EXEC='%s' sh -"
 
   install_rke2_server = concat(
     local.common_pre_install_rke2_commands,
     [format(local.rke2_install_command, "server ${var.rke2_exec_server_args}")],
-    var.disable_selinux ? [] : local.apply_rke2_selinux,
+    # var.disable_selinux ? [] : local.apply_rke2_selinux,
     local.common_post_install_rke2_commands
   )
 
   install_rke2_agent = concat(
     local.common_pre_install_rke2_commands,
     [format(local.rke2_install_command, "agent ${var.rke2_exec_agent_args}")],
-    var.disable_selinux ? [] : local.apply_rke2_selinux,
+    # var.disable_selinux ? [] : local.apply_rke2_selinux,
     local.common_post_install_rke2_commands
   )
 
