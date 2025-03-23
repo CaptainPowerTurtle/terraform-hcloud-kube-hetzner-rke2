@@ -225,6 +225,7 @@ resource "null_resource" "kustomization" {
       {
         values  = indent(4, trimspace(local.cilium_values))
         version = var.cilium_version
+        ipv4_address = module.control_planes[keys(module.control_planes)[0]].ipv4_address
     })
     destination = "/var/post_install/cilium.yaml"
   }

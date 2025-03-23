@@ -568,7 +568,7 @@ variable "enable_metrics_server" {
 
 variable "initial_rke2_channel" {
   type        = string
-  default     = "v1.31" # Please update kube.tf.example too when changing this variable
+  default     = "v1.32" # Please update kube.tf.example too when changing this variable
   description = "Allows you to specify an initial rke2 channel. See https://update.rke2.io/v1-release/channels for available channels."
 
   validation {

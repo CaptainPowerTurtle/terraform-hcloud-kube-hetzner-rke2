@@ -113,7 +113,7 @@ locals {
       service-cidr                = var.service_ipv4_cidr
       cluster-dns                 = var.cluster_dns_ipv4
       write-kubeconfig-mode       = "0644" # needed for import into rancher
-      enable-servicelb = true
+      # enable-servicelb            = true
     },
     lookup(local.cni_rke2_settings, var.cni_plugin, {}),
     var.use_control_plane_lb ? {
