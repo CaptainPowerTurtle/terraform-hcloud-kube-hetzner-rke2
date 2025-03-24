@@ -67,7 +67,8 @@ locals {
     ["timeout 180s /bin/sh -c 'while ! ping -c 1 ${var.address_for_connectivity_test} >/dev/null 2>&1; do echo \"Ready for rke2 installation, waiting for a successful connection to the internet...\"; sleep 5; done; echo Connected'"]
   )
 
-  common_post_install_rke2_commands = concat(var.postinstall_exec, ["restorecon -v /usr/local/bin/rke2"])
+  # common_post_install_rke2_commands = concat(var.postinstall_exec, ["restorecon -v /usr/local/bin/rke2"])
+  common_post_install_rke2_commands = concat(var.postinstall_exec)
 
   kustomization_backup_yaml = yamlencode({
     apiVersion = "kustomize.config.k8s.io/v1beta1"

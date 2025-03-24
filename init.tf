@@ -74,14 +74,15 @@ resource "null_resource" "first_control_plane" {
   # Upon reboot start rke2 and wait for it to be ready to receive commands
   provisioner "remote-exec" {
     inline = [
-      "systemctl start rke2",
+      "systemctl enable rke2-server.service",
+      "systemctl start rke2-server.service",
       # prepare the needed directories
       "mkdir -p /var/post_install /var/user_kustomize",
       # wait for rke2 to become ready
       <<-EOT
       timeout 120 bash <<EOF
-        until systemctl status rke2 > /dev/null; do
-          systemctl start rke2
+        until systemctl status rke2-server.service > /dev/null; do
+          systemctl start rke2-server.service
           echo "Waiting for the rke2 server to start..."
           sleep 2
         done
