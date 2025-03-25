@@ -12,11 +12,3 @@ spec:
   bootstrap: true
   valuesContent: |-
     ${values}
----
-apiVersion: "cilium.io/v2alpha1"
-kind: CiliumLoadBalancerIPPool
-metadata:
-  name: "pool"
-spec:
-  blocks:
-    - cidr: ${ipv4_address}

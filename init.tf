@@ -50,6 +50,7 @@ resource "null_resource" "first_control_plane" {
           cluster-cidr                = var.cluster_ipv4_cidr
           service-cidr                = var.service_ipv4_cidr
           cluster-dns                 = var.cluster_dns_ipv4
+          enable-servicelb            = true
         },
         lookup(local.cni_rke2_settings, var.cni_plugin, {}),
         var.use_control_plane_lb ? {
